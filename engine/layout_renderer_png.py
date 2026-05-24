@@ -53,7 +53,39 @@ _FONT_FILES: dict = {
         (False, True):  ["timesi.ttf", "LiberationSerif-Italic.ttf"],
         (True,  True):  ["timesbi.ttf", "LiberationSerif-BoldItalic.ttf"],
     },
+    # ── Font CJK (cinese/giapponese/coreano) ──────────────────────────────────
+    # Uso: font: "simhei"  oppure  font: "noto cjk"
+    "simhei": {
+        (False, False): ["simhei.ttf"],
+        (True,  False): ["simhei.ttf"],
+        (False, True):  ["simhei.ttf"],
+        (True,  True):  ["simhei.ttf"],
+    },
+    "simsun": {
+        (False, False): ["simsun.ttc"],
+        (True,  False): ["simsunb.ttf", "simsun.ttc"],
+        (False, True):  ["simsun.ttc"],
+        (True,  True):  ["simsun.ttc"],
+    },
+    "noto cjk": {
+        (False, False): ["NotoSansCJK-Regular.ttc", "NotoSansSC-Regular.otf", "NotoSerifCJK-Regular.ttc"],
+        (True,  False): ["NotoSansCJK-Bold.ttc",    "NotoSansSC-Bold.otf",    "NotoSerifCJK-Bold.ttc"],
+        (False, True):  ["NotoSansCJK-Regular.ttc"],
+        (True,  True):  ["NotoSansCJK-Bold.ttc"],
+    },
 }
+
+
+def _has_cjk(text: str) -> bool:
+    """Restituisce True se il testo contiene caratteri CJK (cinese, giapponese, coreano)."""
+    for ch in text:
+        cp = ord(ch)
+        if (0x4E00 <= cp <= 0x9FFF    # CJK Unified Ideographs
+                or 0x3400 <= cp <= 0x4DBF   # CJK Extension A
+                or 0x3000 <= cp <= 0x303F   # CJK Symbols
+                or 0xFF00 <= cp <= 0xFFEF): # Halfwidth/Fullwidth
+            return True
+    return False
 
 
 def _find_font_path(family_lower: str, bold: bool, italic: bool, project_font_dir: Path) -> Path | None:
@@ -184,30 +216,38 @@ def _wrap(text: str, font: ImageFont.FreeTypeFont, max_px: int) -> list[str]:
     dummy = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
 
     def measure(t: str) -> int:
+        if not t:
+            return 0
         bb = dummy.textbbox((0, 0), t, font=font)
         return bb[2] - bb[0]
 
-    # If the whole text fits, skip wrapping
-    if measure(text) <= max_px:
-        return [text]
+    def wrap_segment(segment: str) -> list[str]:
+        """Word-wrap un singolo segmento (senza \n)."""
+        if measure(segment) <= max_px:
+            return [segment]
+        words = segment.split()
+        if not words:
+            return [""]
+        lines: list[str] = []
+        current = ""
+        for word in words:
+            candidate = (current + " " + word).strip()
+            if measure(candidate) <= max_px:
+                current = candidate
+            else:
+                if current:
+                    lines.append(current)
+                current = word
+        if current:
+            lines.append(current)
+        return lines or [segment]
 
-    words = text.split()
-    lines: list[str] = []
-    current = ""
+    # Rispetta prima i \n espliciti nel testo, poi applica word-wrap a ogni segmento
+    result: list[str] = []
+    for segment in text.split("\n"):
+        result.extend(wrap_segment(segment))
 
-    for word in words:
-        candidate = (current + " " + word).strip()
-        if measure(candidate) <= max_px:
-            current = candidate
-        else:
-            if current:
-                lines.append(current)
-            current = word
-
-    if current:
-        lines.append(current)
-
-    return lines or [text]
+    return result or [text]
 
 
 # ── Layer renderers ────────────────────────────────────────────────────────────
@@ -256,6 +296,11 @@ def _render_text(composite: Image.Image, layer: dict, project_font_dir: Path) ->
     shadow  = layer.get("shadow")
 
     font     = _load_font(family, bold, italic, size, project_font_dir)
+    # Fallback automatico CJK: se il testo contiene caratteri cinesi/giapponesi
+    # e il font attivo non li supporta, usa SimSun/msgothic automaticamente.
+    if _has_cjk(text) and family.lower() not in ("simhei", "simsun", "noto cjk", "msgothic"):
+        cjk_font = _load_font("simsun", bold, italic, size, project_font_dir)
+        font = cjk_font
     lines    = _wrap(text, font, w)
     line_gap = int(size * lh_mult)
 
