@@ -1,0 +1,35 @@
+{
+  "template": "lotta_pugilato_light_vertical.pptx",
+  "output_name": "lotta_pugilato_10_14",
+  "texts": {
+    "TITLE": "LOTTA",
+    "SUBTITLE": "PUGILATO",
+    "AGE_FROM": "10",
+    "AGE_TO": "14",
+    "CLAIM": "ENERGIA, AMICIZIA, DISCIPLINA E SICUREZZA.",
+    "CTA": "PROVA GRATUITA",
+    "CTA_SUBTITLE": "LA PRIMA LEZIONE TI ASPETTIAMO!",
+    "PHONE": "351 8899843",
+    "INSTAGRAM": "@virtus_group_",
+    "ADDRESS": "Via Corfu 71",
+    "BENEFIT_1_TITLE": "DISCIPLINA",
+    "BENEFIT_1_TEXT": "Impari il valore dell'impegno e della costanza.",
+    "BENEFIT_2_TITLE": "SICUREZZA",
+    "BENEFIT_2_TEXT": "Aumenti la sicurezza in te stesso.",
+    "BENEFIT_3_TITLE": "FORZA",
+    "BENEFIT_3_TEXT": "Sviluppi forza fisica e controllo.",
+    "BENEFIT_4_TITLE": "RESISTENZA",
+    "BENEFIT_4_TEXT": "Migliori fiato ed energia.",
+    "BENEFIT_5_TITLE": "FOCUS",
+    "BENEFIT_5_TEXT": "Alleni concentrazione e mentalita.",
+    "BENEFIT_6_TITLE": "AUTOSTIMA",
+    "BENEFIT_6_TEXT": "Cresci e scopri il meglio di te."
+  },
+  "images": {
+    "IMAGE_HERO": "assets/images/lotta_pugilato_hero.jpg",
+    "IMAGE_GALLERY_1": "assets/images/lotta_pugilato_drill.jpg",
+    "IMAGE_GALLERY_2": "assets/images/lotta_pugilato_lotta.jpg",
+    "IMAGE_GALLERY_3": "assets/images/lotta_pugilato_sacco.jpg",
+    "LOGO": "assets/images/logo_virtus_combat_academy.png"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "template": "combat_dark_vertical.pptx",
+  "output_name": "bjj_6_9",
+  "texts": {
+    "TITLE": "BJJ",
+    "SUBTITLE": "BRAZILIAN JIU JITSU KIDS",
+    "AGE": "DAI 6 AI 9 ANNI",
+    "CLAIM": "GIOCA. IMPARA. CRESCI.",
+    "DESCRIPTION": "Un percorso tecnico e motorio per sviluppare coordinazione, fiducia e rispetto.",
+    "CTA": "PRENOTA LA TUA PROVA GRATUITA",
+    "PHONE": "3518899843",
+    "INSTAGRAM": "@virtus_group_",
+    "ADDRESS": "Via Corfu 71",
+    "BENEFIT_1_TITLE": "COORDINAZIONE",
+    "BENEFIT_1_TEXT": "Migliora movimento, equilibrio e controllo del corpo.",
+    "BENEFIT_2_TITLE": "RISPETTO",
+    "BENEFIT_2_TEXT": "Impara regole, attenzione e collaborazione.",
+    "BENEFIT_3_TITLE": "SICUREZZA",
+    "BENEFIT_3_TEXT": "Allenamento progressivo e adatto all'eta.",
+    "BENEFIT_4_TITLE": "FIDUCIA",
+    "BENEFIT_4_TEXT": "Costruisce autonomia e sicurezza personale."
+  },
+  "images": {
+    "IMAGE_HERO": "assets/images/bjj_hero.jpg",
+    "IMAGE_GALLERY_1": "assets/images/bjj_1.jpg",
+    "IMAGE_GALLERY_2": "assets/images/bjj_2.jpg",
+    "LOGO": "assets/images/logo_virtus.png"
+  }
+}
