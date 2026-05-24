@@ -1,0 +1,33 @@
+template: combat_light_vertical.pptx
+output_name: difesa_personale
+
+texts:
+  TITLE_1: "DIFESA"
+  TITLE_2: "PERSONALE"
+  AGE: "PER ADULTI"
+  BENEFITS_TITLE: "COSA ALLENERAI"
+  BENEFIT_1_TITLE: "SICUREZZA"
+  BENEFIT_1_TEXT: "Impari a muoverti con più controllo."
+  BENEFIT_2_TITLE: "PREVENZIONE"
+  BENEFIT_2_TEXT: "Riconosci situazioni rischiose prima che degenerino."
+  BENEFIT_3_TITLE: "AUTOCONTROLLO"
+  BENEFIT_3_TEXT: "Gestisci stress, distanza e reazione."
+  BENEFIT_4_TITLE: "TECNICA"
+  BENEFIT_4_TEXT: "Movimenti semplici, realistici e progressivi."
+  BENEFIT_5_TITLE: "FIDUCIA"
+  BENEFIT_5_TEXT: "Costruisci presenza e consapevolezza."
+  BENEFIT_6_TITLE: "FORMA FISICA"
+  BENEFIT_6_TEXT: "Allenamento utile, dinamico e accessibile."
+  CTA_MAIN: "PROVA GRATUITA"
+  CTA_SUB: "POSTI LIMITATI - PRENOTA ORA"
+  ADDRESS: "Via Corfù 71"
+  PHONE: "3518899843"
+  INSTAGRAM: "@virtus_group_"
+
+images:
+  LOGO_TOP: "assets/images/logo.png"
+  LOGO_BOTTOM: "assets/images/logo.png"
+  IMAGE_HERO: "assets/images/hero.jpg"
+  IMAGE_GALLERY_1: "assets/images/gallery_1.jpg"
+  IMAGE_GALLERY_2: "assets/images/gallery_2.jpg"
+  IMAGE_GALLERY_3: "assets/images/gallery_3.jpg"
