@@ -367,9 +367,15 @@ def _render_image(
     assets_base: Path,
     warnings: list[str],
 ) -> None:
-    path = assets_base / layer["src"]
+    src  = layer["src"]
+    path = assets_base / src
+    # Fallback: se non trovata, prova anche assets/images/ relativo alla root
     if not path.exists():
-        msg = f"Immagine mancante per layer '{layer.get('id', '?')}': {path}"
+        alt = assets_base.parent.parent / "assets" / "images" / src
+        if alt.exists():
+            path = alt
+    if not path.exists():
+        msg = f"Immagine mancante per layer '{layer.get('id', '?')}': {src}"
         warnings.append(msg)
         print(f"[WARNING] {msg}")
         return
@@ -583,7 +589,8 @@ def render_layout_to_png(
 
     assets_raw  = layout.get("assets_base", "")
     ab          = Path(assets_raw)
-    assets_base = ab if ab.is_absolute() else project_root / ab if assets_raw else project_root
+    # Default: assets/images/ — se non specificato usa quella cartella
+    assets_base = ab if ab.is_absolute() else project_root / ab if assets_raw else project_root / "assets" / "images"
 
     warnings: list[str] = []
 
