@@ -86,6 +86,14 @@ Per creare un PowerPoint modificabile partendo da un layout YAML completo, usa i
 python generate_layout.py layouts/examples/virtus_difesa_personale_layout.yaml
 ```
 
+Flusso operativo quotidiano:
+
+1. Salva il layout approvato in `layouts/approved/nome_volantino.yaml`.
+2. Esegui `python generate_layout.py layouts/approved/nome_volantino.yaml`.
+3. Trovi il PowerPoint modificabile in `output/`.
+4. Cambia testi, telefono, logo o immagini nel file YAML e rigenera.
+5. Usa Codex/GitHub solo per modificare il motore, non per produrre ogni volantino.
+
 Documentazione: [docs/LAYOUT_ENGINE.md](docs/LAYOUT_ENGINE.md)
 
 ## Formato YAML
