@@ -1,7 +1,8 @@
 import os
+import math
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops
 
 
 # ── Font lookup ────────────────────────────────────────────────────────────────
@@ -179,7 +180,50 @@ def _apply_shape_shadow(
     composite.alpha_composite(layer)
 
 
-# ── Gradient helper ───────────────────────────────────────────────────────────
+# ── Gradient helpers ──────────────────────────────────────────────────────────
+
+def _lerp_color(a: tuple, b: tuple, t: float) -> tuple:
+    return tuple(int(a[i] + t * (b[i] - a[i])) for i in range(4))
+
+
+def _make_gradient_image(w: int, h: int, gradient: dict) -> Image.Image:
+    """Crea un'immagine RGBA con gradiente lineare (angolato) o radiale."""
+    g_type = gradient.get("type", "linear")
+    # supporta sia start/end che from/to
+    c_from = _parse_color(gradient.get("from") or gradient.get("start", "#000000"))
+    c_to   = _parse_color(gradient.get("to")   or gradient.get("end",   "#FFFFFF"))
+
+    band = Image.new("RGBA", (w, h))
+    pixels = band.load()
+
+    if g_type == "radial":
+        cx = float(gradient.get("cx", 0.5)) * w
+        cy = float(gradient.get("cy", 0.5)) * h
+        max_r = math.sqrt((max(cx, w - cx)) ** 2 + (max(cy, h - cy)) ** 2)
+        for py in range(h):
+            for px in range(w):
+                r = math.sqrt((px - cx) ** 2 + (py - cy) ** 2)
+                t = min(r / max_r, 1.0)
+                pixels[px, py] = _lerp_color(c_from, c_to, t)
+    else:
+        # Linear — angle in gradi (0=top→bottom, 90=left→right, 45=diagonale)
+        angle_deg = float(gradient.get("angle", 0)
+                          if "angle" in gradient
+                          else (0 if gradient.get("direction", "vertical") == "vertical" else 90))
+        angle_rad = math.radians(angle_deg)
+        dx = math.sin(angle_rad)
+        dy = math.cos(angle_rad)
+        # proiezione: t = (px*dx + py*dy) normalizzato in [0,1]
+        proj_min = 0 * dx + 0 * dy
+        proj_max = (w - 1) * dx + (h - 1) * dy
+        span = proj_max - proj_min if proj_max != proj_min else 1
+        for py in range(h):
+            for px in range(w):
+                t = ((px * dx + py * dy) - proj_min) / span
+                t = max(0.0, min(1.0, t))
+                pixels[px, py] = _lerp_color(c_from, c_to, t)
+    return band
+
 
 def _draw_gradient(
     composite: Image.Image,
@@ -187,20 +231,7 @@ def _draw_gradient(
     radius: int,
     gradient: dict,
 ) -> None:
-    direction = gradient.get("direction", "vertical")
-    start = _parse_color(gradient["start"])
-    end   = _parse_color(gradient["end"])
-
-    band = Image.new("RGBA", (w, h))
-    steps = h if direction == "vertical" else w
-
-    for i in range(steps):
-        t = i / max(steps - 1, 1)
-        pixel = tuple(int(s + t * (e - s)) for s, e in zip(start, end))
-        if direction == "vertical":
-            band.paste(pixel, (0, i, w, i + 1))   # type: ignore[arg-type]
-        else:
-            band.paste(pixel, (i, 0, i + 1, h))   # type: ignore[arg-type]
+    band = _make_gradient_image(w, h, gradient)
 
     if radius > 0:
         mask = Image.new("L", (w, h), 0)
@@ -208,6 +239,95 @@ def _draw_gradient(
         band.putalpha(mask)
 
     composite.alpha_composite(band, dest=(x, y))
+
+
+# ── Blend modes ───────────────────────────────────────────────────────────────
+
+def _apply_blend(base: Image.Image, top: Image.Image, mode: str, opacity: float = 1.0) -> None:
+    """Applica top su base con blend mode. Modifica base in-place."""
+    if opacity < 1.0:
+        r, g, b, a = top.split()
+        a = a.point(lambda v: int(v * opacity))
+        top = Image.merge("RGBA", (r, g, b, a))
+
+    if mode == "normal":
+        base.alpha_composite(top)
+        return
+
+    # Lavora in RGB, poi riaggiungiamo l'alpha
+    base_rgb = base.convert("RGB")
+    top_rgb  = top.convert("RGB")
+    top_a    = top.split()[3]
+
+    if mode == "multiply":
+        blended = ImageChops.multiply(base_rgb, top_rgb)
+    elif mode == "screen":
+        blended = ImageChops.screen(base_rgb, top_rgb)
+    elif mode == "overlay":
+        # overlay = 2*a*b/255 se a<128 else 255-2*(255-a)*(255-b)/255
+        import numpy as np
+        a_arr = np.array(base_rgb, dtype=float)
+        b_arr = np.array(top_rgb,  dtype=float)
+        mask  = a_arr < 128
+        result = np.where(mask, 2 * a_arr * b_arr / 255,
+                          255 - 2 * (255 - a_arr) * (255 - b_arr) / 255)
+        blended = Image.fromarray(np.clip(result, 0, 255).astype("uint8"), "RGB")
+    elif mode == "soft_light":
+        import numpy as np
+        a_arr = np.array(base_rgb, dtype=float) / 255
+        b_arr = np.array(top_rgb,  dtype=float) / 255
+        result = (1 - 2 * b_arr) * a_arr ** 2 + 2 * b_arr * a_arr
+        blended = Image.fromarray((np.clip(result, 0, 1) * 255).astype("uint8"), "RGB")
+    elif mode == "add":
+        blended = ImageChops.add(base_rgb, top_rgb)
+    elif mode == "difference":
+        blended = ImageChops.difference(base_rgb, top_rgb)
+    else:
+        base.alpha_composite(top)
+        return
+
+    # Componi il risultato blend solo dove top è visibile
+    blended_rgba = blended.convert("RGBA")
+    # Usa l'alpha del layer top come maschera di compositing
+    mask_img = Image.new("L", top.size, 0)
+    mask_img.paste(top_a, (0, 0))
+    base.paste(blended_rgba, (0, 0), mask_img)
+
+
+# ── Text effects ──────────────────────────────────────────────────────────────
+
+def _draw_text_stroke(
+    layer_img: Image.Image,
+    line: str, tx: int, ty_draw: int,
+    font: ImageFont.FreeTypeFont,
+    stroke_color: tuple, stroke_width: int,
+) -> None:
+    """Disegna il contorno del testo espandendo la maschera del glyph."""
+    # Renderizza il testo come maschera
+    mask_img = Image.new("L", layer_img.size, 0)
+    ImageDraw.Draw(mask_img).text((tx, ty_draw), line, font=font, fill=255)
+    # Espandi la maschera (effetto stroke)
+    expanded = mask_img.filter(ImageFilter.MaxFilter(stroke_width * 2 + 1))
+    stroke_layer = Image.new("RGBA", layer_img.size, (0, 0, 0, 0))
+    stroke_layer.paste(Image.new("RGBA", layer_img.size, stroke_color), mask=expanded)
+    layer_img.alpha_composite(stroke_layer)
+
+
+def _draw_text_gradient(
+    layer_img: Image.Image,
+    line: str, tx: int, ty_draw: int,
+    font: ImageFont.FreeTypeFont,
+    gradient: dict,
+) -> None:
+    """Disegna il testo riempito con un gradiente."""
+    # 1. Crea maschera testo
+    mask_img = Image.new("L", layer_img.size, 0)
+    ImageDraw.Draw(mask_img).text((tx, ty_draw), line, font=font, fill=255)
+    # 2. Crea gradiente della dimensione del canvas
+    grad = _make_gradient_image(layer_img.width, layer_img.height, gradient)
+    # 3. Applica maschera al gradiente
+    grad.putalpha(mask_img)
+    layer_img.alpha_composite(grad)
 
 
 # ── Text wrapping ─────────────────────────────────────────────────────────────
@@ -285,32 +405,33 @@ def _render_text(composite: Image.Image, layer: dict, project_font_dir: Path) ->
     if layer.get("uppercase"):
         text = text.upper()
 
-    family  = layer.get("font", "Arial")
-    bold    = bool(layer.get("bold",   False))
-    italic  = bool(layer.get("italic", False))
-    size    = max(1, int(float(layer.get("size", 24))))
-    color   = _parse_color(layer.get("color", "#000000"), layer.get("opacity"))
-    align   = str(layer.get("align", "left")).lower()
-    spacing = float(layer.get("letter_spacing", 0))
-    lh_mult = float(layer.get("line_height", 1.2))
-    shadow  = layer.get("shadow")
+    family         = layer.get("font", "Arial")
+    bold           = bool(layer.get("bold",   False))
+    italic         = bool(layer.get("italic", False))
+    size           = max(1, int(float(layer.get("size", 24))))
+    color          = _parse_color(layer.get("color", "#000000"), layer.get("opacity"))
+    align          = str(layer.get("align", "left")).lower()
+    spacing        = float(layer.get("letter_spacing", 0))
+    lh_mult        = float(layer.get("line_height", 1.2))
+    shadow         = layer.get("shadow")
+    stroke_color   = layer.get("stroke_color")
+    stroke_width   = int(layer.get("stroke_width", 3))
+    gradient_fill  = layer.get("gradient_fill")   # dict con from/to/angle
 
-    font     = _load_font(family, bold, italic, size, project_font_dir)
-    # Fallback automatico CJK: se il testo contiene caratteri cinesi/giapponesi
-    # e il font attivo non li supporta, usa SimSun/msgothic automaticamente.
+    font = _load_font(family, bold, italic, size, project_font_dir)
+    # Fallback automatico CJK
     if _has_cjk(text) and family.lower() not in ("simhei", "simsun", "noto cjk", "msgothic"):
-        cjk_font = _load_font("simsun", bold, italic, size, project_font_dir)
-        font = cjk_font
+        font = _load_font("simsun", bold, italic, size, project_font_dir)
+
     lines    = _wrap(text, font, w)
     line_gap = int(size * lh_mult)
 
-    d   = ImageDraw.Draw(composite)
-    ty  = y
+    d  = ImageDraw.Draw(composite)
+    ty = y
 
     for line in lines:
-        bb      = d.textbbox((0, 0), line, font=font)
-        text_w  = bb[2] - bb[0]
-        text_h  = bb[3] - bb[1]
+        bb     = d.textbbox((0, 0), line, font=font)
+        text_w = bb[2] - bb[0]
 
         if align == "center":
             tx = x + (w - text_w) // 2
@@ -319,10 +440,10 @@ def _render_text(composite: Image.Image, layer: dict, project_font_dir: Path) ->
         else:
             tx = x
 
-        # Compensate for top descender offset from textbbox
-        tx -= bb[0]
+        tx     -= bb[0]
         ty_draw = ty - bb[1]
 
+        # ── 1. Shadow ────────────────────────────────────────────────────────
         if shadow:
             sc  = _parse_color(shadow.get("color", "#00000066"))
             sox = int(shadow.get("offset_x", 2))
@@ -330,14 +451,21 @@ def _render_text(composite: Image.Image, layer: dict, project_font_dir: Path) ->
             sb  = float(shadow.get("blur", 0))
             if sb > 0:
                 sl = Image.new("RGBA", composite.size, (0, 0, 0, 0))
-                ImageDraw.Draw(sl).text((tx + sox, ty_draw + soy), line, font=font, fill=sc,
-                                        spacing=int(spacing))
+                ImageDraw.Draw(sl).text((tx + sox, ty_draw + soy), line, font=font, fill=sc)
                 sl = sl.filter(ImageFilter.GaussianBlur(sb))
                 composite.alpha_composite(sl)
             else:
-                d.text((tx + sox, ty_draw + soy), line, font=font, fill=sc, spacing=int(spacing))
+                d.text((tx + sox, ty_draw + soy), line, font=font, fill=sc)
 
-        if spacing != 0:
+        # ── 2. Stroke / outline ──────────────────────────────────────────────
+        if stroke_color:
+            sc_rgba = _parse_color(stroke_color)
+            _draw_text_stroke(composite, line, tx, ty_draw, font, sc_rgba, stroke_width)
+
+        # ── 3. Fill: gradiente o colore piatto ───────────────────────────────
+        if gradient_fill:
+            _draw_text_gradient(composite, line, tx, ty_draw, font, gradient_fill)
+        elif spacing != 0:
             _draw_tracked(d, line, tx, ty_draw, font, color, int(spacing))
         else:
             d.text((tx, ty_draw), line, font=font, fill=color)
@@ -422,20 +550,28 @@ def _render_image(
     else:
         img = img.resize((w, h), Image.LANCZOS)
 
-    if opacity is not None:
-        alpha = img.getchannel("A")
-        alpha = alpha.point(lambda p: int(p * float(opacity)))
-        img.putalpha(alpha)
+    blend_mode = str(layer.get("blend_mode", "normal")).lower()
+    op_val     = float(opacity) if opacity is not None else 1.0
 
     # Clip to canvas bounds
     cw, ch = composite.size
     if x < 0 or y < 0 or x + w > cw or y + h > ch:
         cx1 = max(x, 0); cy1 = max(y, 0)
         cx2 = min(x + w, cw); cy2 = min(y + h, ch)
-        crop = img.crop((cx1 - x, cy1 - y, cx2 - x, cy2 - y))
-        composite.alpha_composite(crop, dest=(cx1, cy1))
-    else:
+        img = img.crop((cx1 - x, cy1 - y, cx2 - x, cy2 - y))
+        x, y = cx1, cy1
+
+    if blend_mode == "normal":
+        if opacity is not None:
+            alpha = img.getchannel("A")
+            alpha = alpha.point(lambda p: int(p * op_val))
+            img.putalpha(alpha)
         composite.alpha_composite(img, dest=(x, y))
+    else:
+        # Per blend modes: lavoriamo su un sub-canvas della stessa dimensione
+        sub = composite.crop((x, y, x + img.width, y + img.height))
+        _apply_blend(sub, img, blend_mode, op_val)
+        composite.paste(sub, (x, y))
 
 
 def _render_line(composite: Image.Image, layer: dict) -> None:
@@ -567,6 +703,58 @@ def _render_qrcode(composite: Image.Image, layer: dict, warnings: list[str]) -> 
     composite.alpha_composite(qr_img, dest=(x, y))
 
 
+# ── Vignette & gradient overlay ───────────────────────────────────────────────
+
+def _render_vignette(composite: Image.Image, layer: dict) -> None:
+    """Vignetta radiale scura ai bordi — effetto cinematografico."""
+    cw, ch = composite.size
+    x = int(layer.get("x", 0))
+    y = int(layer.get("y", 0))
+    w = int(layer.get("w", cw))
+    h = int(layer.get("h", ch))
+    color     = _parse_color(layer.get("color", "#000000"))
+    intensity = float(layer.get("intensity", 0.6))   # 0-1
+    feather   = float(layer.get("feather", 0.55))     # raggio relativo del centro trasparente
+
+    vig = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    pix = vig.load()
+    cx, cy = w / 2, h / 2
+    max_r = math.sqrt(cx ** 2 + cy ** 2)
+
+    for py in range(h):
+        for px in range(w):
+            r = math.sqrt((px - cx) ** 2 + (py - cy) ** 2) / max_r
+            t = max(0.0, (r - feather) / (1.0 - feather)) if r > feather else 0.0
+            a = int(t * intensity * 255)
+            pix[px, py] = (color[0], color[1], color[2], a)
+
+    composite.alpha_composite(vig, dest=(x, y))
+
+
+def _render_gradient_overlay(composite: Image.Image, layer: dict) -> None:
+    """Gradiente sovrapposto all'intera area — utile per scurire/colorare."""
+    cw, ch = composite.size
+    x = int(layer.get("x", 0))
+    y = int(layer.get("y", 0))
+    w = int(layer.get("w", cw))
+    h = int(layer.get("h", ch))
+    opacity    = layer.get("opacity", 1.0)
+    blend_mode = str(layer.get("blend_mode", "normal")).lower()
+    gradient   = layer.get("gradient", {"from": "#00000000", "to": "#000000AA"})
+
+    band = _make_gradient_image(w, h, gradient)
+    if blend_mode == "normal":
+        if float(opacity) < 1.0:
+            r, g, b, a = band.split()
+            a = a.point(lambda v: int(v * float(opacity)))
+            band = Image.merge("RGBA", (r, g, b, a))
+        composite.alpha_composite(band, dest=(x, y))
+    else:
+        sub = composite.crop((x, y, x + w, y + h))
+        _apply_blend(sub, band, blend_mode, float(opacity))
+        composite.paste(sub, (x, y))
+
+
 # ── Public API ─────────────────────────────────────────────────────────────────
 
 def render_layout_to_png(
@@ -611,6 +799,10 @@ def render_layout_to_png(
                 _render_icon(composite, layer, project_font_dir)
             elif ltype == "qrcode":
                 _render_qrcode(composite, layer, warnings)
+            elif ltype == "vignette":
+                _render_vignette(composite, layer)
+            elif ltype == "gradient_overlay":
+                _render_gradient_overlay(composite, layer)
         except Exception as exc:
             msg = f"Errore nel layer '{layer.get('id', ltype)}': {exc}"
             warnings.append(msg)
