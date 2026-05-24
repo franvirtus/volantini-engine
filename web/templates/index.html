@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VolantiniEngine — Virtus</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            green:  { DEFAULT: '#254A18', light: '#3D6A28', dark: '#1A3810' },
+            gold:   { DEFAULT: '#C5A635', light: '#D4B84A' },
+            cream:  { DEFAULT: '#F0EAD8', dark: '#E0D8C0' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #F0EAD8; font-family: Georgia, serif; }
+    .field-label { font-size: 0.78rem; font-weight: 600; color: #254A18; text-transform: uppercase; letter-spacing: 0.05em; }
+    .field-input {
+      width: 100%; padding: 0.5rem 0.75rem;
+      border: 1.5px solid #C5A635; border-radius: 8px;
+      background: #fff; font-size: 0.9rem; color: #1A2808;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field-input:focus { outline: none; border-color: #254A18; box-shadow: 0 0 0 3px #254A1820; }
+    .btn-primary {
+      background: #254A18; color: #fff; font-weight: 700;
+      padding: 0.65rem 1.5rem; border-radius: 999px; border: none;
+      cursor: pointer; font-size: 1rem; letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { background: #3D6A28; }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-gold {
+      background: #C5A635; color: #1A2808; font-weight: 700;
+      padding: 0.65rem 1.5rem; border-radius: 999px; border: none;
+      cursor: pointer; font-size: 1rem; letter-spacing: 0.04em;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-gold:hover { background: #D4B84A; }
+    .btn-gold:active { transform: scale(0.97); }
+    #preview-img { max-height: 80vh; border-radius: 12px; box-shadow: 0 8px 32px #00000030; }
+    .spinner { display: none; width: 32px; height: 32px; border: 3px solid #C5A635; border-top-color: #254A18; border-radius: 50%; animation: spin 0.7s linear infinite; margin: auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    select.field-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23254A18' stroke-width='2' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-green text-white px-6 py-4 flex items-center gap-4 shadow-lg">
+    <div>
+      <div class="text-gold font-bold tracking-widest text-lg">V I R T U S</div>
+      <div class="text-white/70 text-xs tracking-wider">VOLANTINI ENGINE</div>
+    </div>
+  </header>
+
+  <!-- Layout principale -->
+  <div class="flex gap-0 min-h-[calc(100vh-64px)]">
+
+    <!-- ── Pannello sinistro: form ── -->
+    <div class="w-[420px] flex-shrink-0 bg-cream-dark border-r border-gold/30 overflow-y-auto p-6" style="background:#E8E0CC;">
+      <form id="main-form">
+
+        <!-- Selezione template -->
+        <div class="mb-6">
+          <div class="field-label mb-1">Template</div>
+          <select name="template_name" id="template-select" class="field-input" onchange="loadFields(this.value)">
+            {% for t in templates %}
+            <option value="{{ t.name }}" {% if t.name == active_template %}selected{% endif %}>
+              {{ t.label }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Campi dinamici -->
+        <div id="fields-container">
+          {% for f in fields %}
+          <div class="mb-4">
+            <label class="field-label mb-1 block">{{ f.label }}</label>
+            <input type="text" name="{{ f.key }}" class="field-input"
+                   placeholder="{{ f.placeholder }}" value="{{ f.placeholder }}">
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Bottoni -->
+        <div class="flex gap-3 mt-6 sticky bottom-0 py-4" style="background:#E8E0CC;">
+          <button type="button" class="btn-primary flex-1" onclick="generatePreview()">
+            ▶ Genera anteprima
+          </button>
+          <button type="button" class="btn-gold flex-1" onclick="downloadPng()">
+            ↓ Scarica PNG
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- ── Pannello destro: anteprima ── -->
+    <div class="flex-1 flex flex-col items-center justify-center p-8 gap-6">
+      <div id="spinner" class="spinner"></div>
+      <div id="preview-placeholder" class="text-green/40 text-center">
+        <div class="text-6xl mb-4">🖼️</div>
+        <div class="text-lg font-bold tracking-wide">Compila il form e clicca<br><span class="text-green">"Genera anteprima"</span></div>
+      </div>
+      <img id="preview-img" src="" alt="Anteprima volantino" style="display:none;">
+      <div id="error-msg" class="text-red-600 text-sm font-bold hidden bg-red-50 border border-red-200 rounded-xl px-4 py-3 max-w-md text-center"></div>
+    </div>
+
+  </div>
+
+  <!-- Form nascosto per il download -->
+  <form id="download-form" method="POST" action="/download" style="display:none;"></form>
+
+  <script>
+    function getFormData() {
+      const form = document.getElementById('main-form');
+      const data = {};
+      new FormData(form).forEach((v, k) => { if (v.trim()) data[k] = v; });
+      return data;
+    }
+
+    async function generatePreview() {
+      const spinner  = document.getElementById('spinner');
+      const img      = document.getElementById('preview-img');
+      const ph       = document.getElementById('preview-placeholder');
+      const errMsg   = document.getElementById('error-msg');
+
+      spinner.style.display = 'block';
+      img.style.display = 'none';
+      ph.style.display  = 'none';
+      errMsg.classList.add('hidden');
+
+      const formData = new FormData(document.getElementById('main-form'));
+
+      try {
+        const res  = await fetch('/preview', { method: 'POST', body: formData });
+        const json = await res.json();
+        if (json.ok) {
+          img.src = 'data:image/png;base64,' + json.image;
+          img.style.display = 'block';
+        } else {
+          errMsg.textContent = 'Errore: ' + json.error;
+          errMsg.classList.remove('hidden');
+          ph.style.display = 'block';
+        }
+      } catch(e) {
+        errMsg.textContent = 'Errore di rete: ' + e.message;
+        errMsg.classList.remove('hidden');
+        ph.style.display = 'block';
+      } finally {
+        spinner.style.display = 'none';
+      }
+    }
+
+    function downloadPng() {
+      const mainForm = document.getElementById('main-form');
+      const dlForm   = document.getElementById('download-form');
+      // Copia tutti i campi nel form di download
+      dlForm.innerHTML = '';
+      new FormData(mainForm).forEach((v, k) => {
+        const inp = document.createElement('input');
+        inp.type = 'hidden'; inp.name = k; inp.value = v;
+        dlForm.appendChild(inp);
+      });
+      dlForm.submit();
+    }
+
+    async function loadFields(templateName) {
+      const res    = await fetch('/fields/' + templateName);
+      const json   = await res.json();
+      const cont   = document.getElementById('fields-container');
+      cont.innerHTML = '';
+      json.fields.forEach(f => {
+        cont.innerHTML += `
+          <div class="mb-4">
+            <label class="field-label mb-1 block">${f.label}</label>
+            <input type="text" name="${f.key}" class="field-input"
+                   placeholder="${f.placeholder}" value="${f.placeholder}">
+          </div>`;
+      });
+    }
+  </script>
+
+</body>
+</html>

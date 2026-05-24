@@ -1,0 +1,614 @@
+# Template: Corso Professionale — 4 righe titolo, 2 pill, feature box, 4 card, CTA
+# Font misurato: Georgia Bold 64pt → FORMAZIONE=486px, NUTRIZIONISTI=554px
+# Colonna sinistra: x=35 → x=620 (585px) — foto da x=625
+
+output_name: "{{output_name}}"
+
+theme:
+  green:  "#254A18"
+  gold:   "#C5A635"
+  bg:     "#F0EAD8"
+  text:   "#1A2808"
+  white:  "#FFFFFF"
+  font:   "Georgia"
+
+variables:
+  output_name:   "corso_output"
+  titolo_1:      "CORSO DI"
+  titolo_2:      "CORSO"
+  titolo_3:      "PER"
+  titolo_4:      "TITOLO"
+  sottotitolo:   "Descrizione del corso"
+  giorni_label:  "Ogni mercoledì"
+  orario_label:  "alle 15:00"
+  sede_label:    "Virtus • Sede"
+  feature_title: "BENEFIT PRINCIPALE"
+  feature_body:  "Descrizione del benefit principale del corso"
+  card1:         "Argomento 1"
+  card2:         "Argomento 2"
+  card3:         "Argomento 3"
+  card4:         "Argomento 4"
+  cta_main:      "ISCRIVITI ORA"
+  cta_sub:       "RICHIEDI INFORMAZIONI IN SEDE"
+  hero_img:      "hero.jpg"
+
+canvas:
+  preset: volantino
+  background: "{{theme.bg}}"
+
+assets_base: "assets/images"
+
+layers:
+
+  # ── Sfondo ────────────────────────────────────────────────────────────────
+  - id: bg
+    type: rect
+    x: 0
+    y: 0
+    w: 1080
+    h: 1530
+    fill: "{{theme.bg}}"
+
+  # ── Foto hero (top right, parte da x=625) ────────────────────────────────
+  - id: hero
+    type: image
+    src: "{{hero_img}}"
+    x: 625
+    y: 0
+    w: 455
+    h: 720
+    fit: cover
+
+  # ── Logo ─────────────────────────────────────────────────────────────────
+  - id: logo
+    type: image
+    src: "logo.png"
+    x: 448
+    y: 22
+    w: 84
+    h: 70
+    fit: contain
+
+  # ── VIRTUS ────────────────────────────────────────────────────────────────
+  - id: brand
+    type: text
+    text: "V I R T U S"
+    x: 260
+    y: 100
+    w: 560
+    h: 58
+    font: "{{theme.font}}"
+    bold: true
+    size: 44
+    color: "{{theme.text}}"
+    align: center
+
+  - id: brand_line
+    type: line
+    x1: 390
+    y1: 164
+    x2: 690
+    y2: 164
+    color: "{{theme.gold}}"
+    width: 2
+
+  # ── Titolo 4 righe a 64pt (misurato: ogni riga h≈46px, spacing=76px) ─────
+  - id: t1
+    type: text
+    text: "{{titolo_1}}"
+    x: 35
+    y: 185
+    w: 390
+    h: 52
+    font: "{{theme.font}}"
+    bold: true
+    size: 64
+    color: "{{theme.text}}"
+    align: left
+
+  - id: t2
+    type: text
+    text: "{{titolo_2}}"
+    x: 35
+    y: 261
+    w: 510
+    h: 52
+    font: "{{theme.font}}"
+    bold: true
+    size: 64
+    color: "{{theme.text}}"
+    align: left
+
+  - id: t3
+    type: text
+    text: "{{titolo_3}}"
+    x: 35
+    y: 337
+    w: 200
+    h: 52
+    font: "{{theme.font}}"
+    bold: true
+    size: 64
+    color: "{{theme.text}}"
+    align: left
+
+  - id: t4
+    type: text
+    text: "{{titolo_4}}"
+    x: 35
+    y: 413
+    w: 590
+    h: 52
+    font: "{{theme.font}}"
+    bold: true
+    size: 64
+    color: "{{theme.text}}"
+    align: left
+
+  # ── Divisore gold ─────────────────────────────────────────────────────────
+  - id: div_l
+    type: line
+    x1: 35
+    y1: 477
+    x2: 466
+    y2: 477
+    color: "{{theme.gold}}"
+    width: 1
+
+  - id: div_dot
+    type: circle
+    x: 469
+    y: 469
+    w: 16
+    h: 16
+    fill: "{{theme.gold}}"
+
+  - id: div_r
+    type: line
+    x1: 489
+    y1: 477
+    x2: 630
+    y2: 477
+    color: "{{theme.gold}}"
+    width: 1
+
+  # ── Sottotitolo ───────────────────────────────────────────────────────────
+  - id: subtitle
+    type: text
+    text: "{{sottotitolo}}"
+    x: 35
+    y: 497
+    w: 580
+    h: 80
+    font: "{{theme.font}}"
+    italic: true
+    size: 27
+    color: "#2A3820"
+    align: left
+    line_height: 1.38
+
+  # ── Pill Giorno/Orario (y=595) ────────────────────────────────────────────
+  - id: sched_bg
+    type: rect
+    x: 35
+    y: 595
+    w: 630
+    h: 92
+    fill: "{{theme.green}}"
+    radius: 46
+
+  - id: sched_icon_bg
+    type: circle
+    x: 52
+    y: 612
+    w: 58
+    h: 58
+    fill: "{{theme.gold}}"
+
+  - id: sched_icon
+    type: icon
+    name: calendar
+    x: 52
+    y: 612
+    w: 58
+    h: 58
+    color: "{{theme.green}}"
+
+  - id: sched_sep
+    type: line
+    x1: 128
+    y1: 610
+    x2: 128
+    y2: 678
+    color: "#3D6A28"
+    width: 1
+
+  - id: sched_t1
+    type: text
+    text: "{{giorni_label}}"
+    x: 148
+    y: 610
+    w: 490
+    h: 40
+    font: "{{theme.font}}"
+    size: 30
+    color: "{{theme.white}}"
+    align: left
+
+  - id: sched_t2
+    type: text
+    text: "{{orario_label}}"
+    x: 148
+    y: 650
+    w: 490
+    h: 38
+    font: "{{theme.font}}"
+    bold: true
+    size: 29
+    color: "{{theme.white}}"
+    align: left
+
+  # ── Pill Sede (y=705) ─────────────────────────────────────────────────────
+  - id: loc_bg
+    type: rect
+    x: 35
+    y: 705
+    w: 572
+    h: 80
+    fill: "{{theme.green}}"
+    radius: 40
+
+  - id: loc_icon_bg
+    type: circle
+    x: 52
+    y: 721
+    w: 48
+    h: 48
+    fill: "{{theme.gold}}"
+
+  - id: loc_icon
+    type: icon
+    name: pin
+    x: 52
+    y: 721
+    w: 48
+    h: 48
+    color: "{{theme.green}}"
+
+  - id: loc_sep
+    type: line
+    x1: 118
+    y1: 720
+    x2: 118
+    y2: 776
+    color: "#3D6A28"
+    width: 1
+
+  - id: loc_text
+    type: text
+    text: "{{sede_label}}"
+    x: 136
+    y: 731
+    w: 445
+    h: 50
+    font: "{{theme.font}}"
+    bold: true
+    size: 30
+    color: "{{theme.white}}"
+    align: left
+
+  # ── Feature box (y=810) ───────────────────────────────────────────────────
+  - id: feat_bg
+    type: rect
+    x: 35
+    y: 810
+    w: 1010
+    h: 175
+    fill: "{{theme.green}}"
+    radius: 18
+
+  - id: feat_icon
+    type: icon
+    name: trophy
+    x: 50
+    y: 820
+    w: 132
+    h: 148
+    color: "{{theme.gold}}"
+
+  - id: feat_t1
+    type: text
+    text: "{{feature_title}}"
+    x: 225
+    y: 832
+    w: 640
+    h: 56
+    font: "{{theme.font}}"
+    bold: true
+    size: 40
+    color: "{{theme.gold}}"
+    align: left
+
+  - id: feat_t2
+    type: text
+    text: "{{feature_body}}"
+    x: 225
+    y: 892
+    w: 590
+    h: 86
+    font: "{{theme.font}}"
+    size: 27
+    color: "{{theme.white}}"
+    align: left
+    line_height: 1.32
+
+  # ── Badge POSTI LIMITATI (sovrapposto alla feature box, a destra) ─────────
+  - id: badge_bg
+    type: circle
+    x: 856
+    y: 788
+    w: 172
+    h: 172
+    fill: "{{theme.gold}}"
+    shadow:
+      color: "#00000028"
+      blur: 10
+      offset_x: 2
+      offset_y: 4
+
+  - id: badge_t1
+    type: text
+    text: "POSTI"
+    x: 856
+    y: 830
+    w: 172
+    h: 42
+    font: "{{theme.font}}"
+    bold: true
+    size: 30
+    color: "{{theme.green}}"
+    align: center
+
+  - id: badge_t2
+    type: text
+    text: "LIMITATI"
+    x: 856
+    y: 875
+    w: 172
+    h: 42
+    font: "{{theme.font}}"
+    bold: true
+    size: 30
+    color: "{{theme.green}}"
+    align: center
+
+  # ── COSA IMPARERAI ────────────────────────────────────────────────────────
+  - id: cosa_line_l
+    type: line
+    x1: 35
+    y1: 1018
+    x2: 270
+    y2: 1018
+    color: "{{theme.gold}}"
+    width: 1
+
+  - id: cosa_title
+    type: text
+    text: "COSA IMPARERAI"
+    x: 276
+    y: 1000
+    w: 528
+    h: 40
+    font: "{{theme.font}}"
+    bold: true
+    size: 26
+    color: "{{theme.text}}"
+    align: center
+    letter_spacing: 4
+
+  - id: cosa_line_r
+    type: line
+    x1: 808
+    y1: 1018
+    x2: 1045
+    y2: 1018
+    color: "{{theme.gold}}"
+    width: 1
+
+  # ── 4 Card feature ────────────────────────────────────────────────────────
+  - id: c1_bg
+    type: rect
+    x: 35
+    y: 1038
+    w: 236
+    h: 198
+    fill: "{{theme.white}}"
+    radius: 16
+    shadow:
+      color: "#00000018"
+      blur: 12
+      offset_y: 4
+
+  - id: c1_icon
+    type: icon
+    name: star
+    x: 85
+    y: 1052
+    w: 136
+    h: 96
+    color: "{{theme.green}}"
+
+  - id: c1_text
+    type: text
+    text: "{{card1}}"
+    x: 35
+    y: 1156
+    w: 236
+    h: 74
+    font: "{{theme.font}}"
+    size: 22
+    color: "{{theme.text}}"
+    align: center
+    line_height: 1.22
+
+  - id: c2_bg
+    type: rect
+    x: 287
+    y: 1038
+    w: 236
+    h: 198
+    fill: "{{theme.white}}"
+    radius: 16
+    shadow:
+      color: "#00000018"
+      blur: 12
+      offset_y: 4
+
+  - id: c2_icon
+    type: icon
+    name: people
+    x: 337
+    y: 1052
+    w: 136
+    h: 96
+    color: "{{theme.green}}"
+
+  - id: c2_text
+    type: text
+    text: "{{card2}}"
+    x: 287
+    y: 1156
+    w: 236
+    h: 74
+    font: "{{theme.font}}"
+    size: 22
+    color: "{{theme.text}}"
+    align: center
+    line_height: 1.22
+
+  - id: c3_bg
+    type: rect
+    x: 539
+    y: 1038
+    w: 236
+    h: 198
+    fill: "{{theme.white}}"
+    radius: 16
+    shadow:
+      color: "#00000018"
+      blur: 12
+      offset_y: 4
+
+  - id: c3_icon
+    type: icon
+    name: fire
+    x: 589
+    y: 1052
+    w: 136
+    h: 96
+    color: "{{theme.green}}"
+
+  - id: c3_text
+    type: text
+    text: "{{card3}}"
+    x: 539
+    y: 1156
+    w: 236
+    h: 74
+    font: "{{theme.font}}"
+    size: 22
+    color: "{{theme.text}}"
+    align: center
+    line_height: 1.22
+
+  - id: c4_bg
+    type: rect
+    x: 791
+    y: 1038
+    w: 254
+    h: 198
+    fill: "{{theme.white}}"
+    radius: 16
+    shadow:
+      color: "#00000018"
+      blur: 12
+      offset_y: 4
+
+  - id: c4_icon
+    type: icon
+    name: check
+    x: 841
+    y: 1052
+    w: 154
+    h: 96
+    color: "{{theme.green}}"
+
+  - id: c4_text
+    type: text
+    text: "{{card4}}"
+    x: 791
+    y: 1156
+    w: 254
+    h: 74
+    font: "{{theme.font}}"
+    size: 22
+    color: "{{theme.text}}"
+    align: center
+    line_height: 1.22
+
+  # ── CTA bar ───────────────────────────────────────────────────────────────
+  - id: cta_bg
+    type: rect
+    x: 35
+    y: 1300
+    w: 1010
+    h: 106
+    fill: "{{theme.green}}"
+    radius: 53
+    shadow:
+      color: "#25481840"
+      blur: 18
+      offset_y: 6
+
+  - id: cta_circle
+    type: circle
+    x: 53
+    y: 1318
+    w: 70
+    h: 70
+    fill: "#1A3810"
+
+  - id: cta_leaf_icon
+    type: icon
+    name: instagram
+    x: 53
+    y: 1318
+    w: 70
+    h: 70
+    color: "{{theme.gold}}"
+
+  - id: cta_main
+    type: text
+    text: "{{cta_main}}"
+    x: 185
+    y: 1318
+    w: 680
+    h: 52
+    font: "{{theme.font}}"
+    bold: true
+    size: 46
+    color: "{{theme.white}}"
+    align: center
+
+  - id: cta_sub
+    type: text
+    text: "{{cta_sub}}"
+    x: 185
+    y: 1372
+    w: 680
+    h: 32
+    font: "{{theme.font}}"
+    size: 18
+    color: "{{theme.gold}}"
+    align: center
+    letter_spacing: 2

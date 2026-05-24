@@ -1,0 +1,222 @@
+output_name: pilates_virtus_replica_test
+
+canvas:
+  width: 1080
+  height: 1530
+  background: "#F8F2E8"
+
+assets_base: "assets/images"
+
+layers:
+  - id: bg
+    type: rect
+    x: 0
+    y: 0
+    w: 1080
+    h: 1530
+    fill: "#F8F2E8"
+
+  - id: photo_area
+    type: image
+    src: "hero.jpg"
+    x: 525
+    y: 260
+    w: 555
+    h: 760
+    fit: cover
+    opacity: 0.92
+
+  - id: brand
+    type: text
+    text: "V I R T U S"
+    x: 260
+    y: 120
+    w: 560
+    h: 60
+    font: "Georgia"
+    size: 38
+    color: "#2C2C2C"
+    align: center
+
+  - id: small_line
+    type: line
+    x1: 500
+    y1: 195
+    x2: 580
+    y2: 195
+    color: "#C9A96E"
+    width: 2
+
+  - id: title_1
+    type: text
+    text: "CORSO DI"
+    x: 105
+    y: 255
+    w: 850
+    h: 90
+    font: "Georgia"
+    size: 74
+    color: "#2C2C2C"
+    align: center
+
+  - id: title_2
+    type: text
+    text: "PILATES"
+    x: 65
+    y: 350
+    w: 950
+    h: 150
+    font: "Georgia"
+    bold: true
+    size: 122
+    color: "#242424"
+    align: center
+
+  - id: subtitle
+    type: text
+    text: "Equilibrio, postura,"
+    x: 100
+    y: 555
+    w: 520
+    h: 70
+    font: "Georgia"
+    italic: true
+    size: 44
+    color: "#6B7D5D"
+    align: center
+
+  - id: subtitle_2
+    type: text
+    text: "controllo e benessere"
+    x: 90
+    y: 625
+    w: 560
+    h: 70
+    font: "Georgia"
+    italic: true
+    size: 42
+    color: "#6B7D5D"
+    align: center
+
+  - id: schedule_top
+    type: rect
+    x: 80
+    y: 760
+    w: 610
+    h: 112
+    fill: "#6E7E5A"
+    radius: 24
+
+  - id: schedule_days
+    type: text
+    text: "Lunedì e Venerdì"
+    x: 100
+    y: 790
+    w: 570
+    h: 66
+    font: "Georgia"
+    size: 48
+    color: "#FFFFFF"
+    align: center
+
+  - id: schedule_bottom
+    type: rect
+    x: 80
+    y: 872
+    w: 610
+    h: 150
+    fill: "#FFF9EF"
+    radius: 18
+
+  - id: schedule_time
+    type: text
+    text: "16:00 – 17:00"
+    x: 105
+    y: 902
+    w: 560
+    h: 100
+    font: "Georgia"
+    size: 72
+    color: "#2C2C2C"
+    align: center
+
+  - id: location
+    type: text
+    text: "Sede Virtus · Via Montello"
+    x: 105
+    y: 1060
+    w: 560
+    h: 60
+    font: "Georgia"
+    bold: true
+    size: 34
+    color: "#2C2C2C"
+    align: center
+
+  - id: lower_panel
+    type: rect
+    x: 0
+    y: 1190
+    w: 1080
+    h: 340
+    fill: "#FFF9EF"
+
+  - id: closing
+    type: text
+    text: "Scopri il piacere di"
+    x: 230
+    y: 1245
+    w: 620
+    h: 64
+    font: "Georgia"
+    italic: true
+    size: 42
+    color: "#31402F"
+    align: center
+
+  - id: closing_2
+    type: text
+    text: "allenarti con armonia"
+    x: 210
+    y: 1310
+    w: 660
+    h: 64
+    font: "Georgia"
+    italic: true
+    size: 42
+    color: "#31402F"
+    align: center
+
+  - id: cta_box
+    type: rect
+    x: 285
+    y: 1400
+    w: 510
+    h: 70
+    fill: "#C98E7E"
+    radius: 18
+
+  - id: cta
+    type: text
+    text: "PRENOTA LA TUA PROVA"
+    x: 285
+    y: 1417
+    w: 510
+    h: 42
+    font: "Georgia"
+    bold: true
+    size: 26
+    color: "#FFFFFF"
+    align: center
+
+  - id: footer
+    type: text
+    text: "Posti limitati · 3518899843 · @virtus_group_"
+    x: 140
+    y: 1480
+    w: 800
+    h: 32
+    font: "Montserrat"
+    size: 20
+    color: "#6E7E5A"
+    align: center

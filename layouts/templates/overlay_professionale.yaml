@@ -1,0 +1,321 @@
+# Template overlay: usa un'immagine base generata dall'AI e ci sovrappone solo i testi.
+# TUTTI gli elementi grafici (logo, foto, icone, decorazioni) sono nell'immagine base.
+# Uso: python generate_layout.py layouts/templates/overlay_professionale.yaml --data campaigns/xxx.yaml --format png
+
+output_name: "{{output_name}}"
+
+theme:
+  text:   "#1A2808"
+  white:  "#FFFFFF"
+  gold:   "#C5A635"
+  green:  "#254A18"
+  font:   "Georgia"
+
+variables:
+  output_name:   "overlay_output"
+  template_img:  "template.jpg"
+  titolo_1:      "CORSO DI"
+  titolo_2:      "CORSO"
+  titolo_3:      "PER"
+  titolo_4:      "TITOLO"
+  sottotitolo:   "Descrizione del corso"
+  giorni_label:  "Ogni mercoledì"
+  orario_label:  "alle 15:00"
+  sede_label:    "Virtus • Sede"
+  feature_title: "BENEFIT PRINCIPALE"
+  feature_body:  "Descrizione del benefit principale"
+  card1:         "Argomento 1"
+  card2:         "Argomento 2"
+  card3:         "Argomento 3"
+  card4:         "Argomento 4"
+  cta_main:      "ISCRIVITI ORA"
+  cta_sub:       "RICHIEDI INFORMAZIONI IN SEDE"
+
+canvas:
+  width: 1080
+  height: 1530
+
+assets_base: "assets/images"
+
+layers:
+
+  # ── Immagine base AI (tutti i grafici già inclusi) ────────────────────────
+  - id: base
+    type: image
+    src: "{{template_img}}"
+    x: 0
+    y: 0
+    w: 1080
+    h: 1530
+    fit: fill
+
+  # ── VIRTUS brand (il logo V è già nel template, aggiungiamo solo il testo) ─
+  - id: brand
+    type: text
+    text: "V I R T U S"
+    x: 270
+    y: 104
+    w: 540
+    h: 58
+    font: "{{theme.font}}"
+    bold: true
+    size: 44
+    color: "{{theme.text}}"
+    align: center
+
+  # ── Titolo (4 righe, 68pt, spacing 98px, area y=148..540) ────────────────
+  - id: t1
+    type: text
+    text: "{{titolo_1}}"
+    x: 35
+    y: 150
+    w: 395
+    h: 56
+    font: "{{theme.font}}"
+    bold: true
+    size: 68
+    color: "{{theme.text}}"
+    align: left
+
+  - id: t2
+    type: text
+    text: "{{titolo_2}}"
+    x: 35
+    y: 248
+    w: 540
+    h: 56
+    font: "{{theme.font}}"
+    bold: true
+    size: 68
+    color: "{{theme.text}}"
+    align: left
+
+  - id: t3
+    type: text
+    text: "{{titolo_3}}"
+    x: 35
+    y: 346
+    w: 215
+    h: 56
+    font: "{{theme.font}}"
+    bold: true
+    size: 68
+    color: "{{theme.text}}"
+    align: left
+
+  - id: t4
+    type: text
+    text: "{{titolo_4}}"
+    x: 35
+    y: 444
+    w: 610
+    h: 56
+    font: "{{theme.font}}"
+    bold: true
+    size: 68
+    color: "{{theme.text}}"
+    align: left
+
+  # ── Sottotitolo (area y=570..685) ─────────────────────────────────────────
+  - id: subtitle
+    type: text
+    text: "{{sottotitolo}}"
+    x: 35
+    y: 578
+    w: 600
+    h: 90
+    font: "{{theme.font}}"
+    italic: true
+    size: 27
+    color: "#2A3820"
+    align: left
+    line_height: 1.38
+
+  # ── Pill orario (y=690..800) — testo a destra dell'icona/divisore ─────────
+  - id: sched_t1
+    type: text
+    text: "{{giorni_label}}"
+    x: 148
+    y: 704
+    w: 490
+    h: 42
+    font: "{{theme.font}}"
+    size: 30
+    color: "{{theme.white}}"
+    align: left
+
+  - id: sched_t2
+    type: text
+    text: "{{orario_label}}"
+    x: 148
+    y: 749
+    w: 490
+    h: 40
+    font: "{{theme.font}}"
+    bold: true
+    size: 29
+    color: "{{theme.white}}"
+    align: left
+
+  # ── Pill sede (y=816..916) ────────────────────────────────────────────────
+  - id: loc_text
+    type: text
+    text: "{{sede_label}}"
+    x: 148
+    y: 848
+    w: 450
+    h: 52
+    font: "{{theme.font}}"
+    bold: true
+    size: 30
+    color: "{{theme.white}}"
+    align: left
+
+  # ── Feature box (y=930..1123) — icona già nel template ───────────────────
+  - id: feat_t1
+    type: text
+    text: "{{feature_title}}"
+    x: 215
+    y: 952
+    w: 640
+    h: 56
+    font: "{{theme.font}}"
+    bold: true
+    size: 38
+    color: "{{theme.gold}}"
+    align: left
+
+  - id: feat_t2
+    type: text
+    text: "{{feature_body}}"
+    x: 215
+    y: 1012
+    w: 590
+    h: 90
+    font: "{{theme.font}}"
+    size: 27
+    color: "{{theme.white}}"
+    align: left
+    line_height: 1.32
+
+  # ── Badge POSTI LIMITATI (cerchio oro a destra, y≈888..1070) ─────────────
+  - id: badge_t1
+    type: text
+    text: "POSTI"
+    x: 788
+    y: 926
+    w: 175
+    h: 46
+    font: "{{theme.font}}"
+    bold: true
+    size: 29
+    color: "{{theme.green}}"
+    align: center
+
+  - id: badge_t2
+    type: text
+    text: "LIMITATI"
+    x: 788
+    y: 1014
+    w: 175
+    h: 46
+    font: "{{theme.font}}"
+    bold: true
+    size: 29
+    color: "{{theme.green}}"
+    align: center
+
+  # ── COSA IMPARERAI header (y≈1090) ────────────────────────────────────────
+  - id: cosa_title
+    type: text
+    text: "COSA IMPARERAI"
+    x: 280
+    y: 1093
+    w: 520
+    h: 40
+    font: "{{theme.font}}"
+    bold: true
+    size: 26
+    color: "{{theme.text}}"
+    align: center
+    letter_spacing: 4
+
+  # ── Card labels (4 carte, icone già nel template) ─────────────────────────
+  - id: c1_text
+    type: text
+    text: "{{card1}}"
+    x: 35
+    y: 1295
+    w: 236
+    h: 74
+    font: "{{theme.font}}"
+    size: 21
+    color: "{{theme.text}}"
+    align: center
+    line_height: 1.22
+
+  - id: c2_text
+    type: text
+    text: "{{card2}}"
+    x: 287
+    y: 1295
+    w: 236
+    h: 74
+    font: "{{theme.font}}"
+    size: 21
+    color: "{{theme.text}}"
+    align: center
+    line_height: 1.22
+
+  - id: c3_text
+    type: text
+    text: "{{card3}}"
+    x: 539
+    y: 1295
+    w: 236
+    h: 74
+    font: "{{theme.font}}"
+    size: 21
+    color: "{{theme.text}}"
+    align: center
+    line_height: 1.22
+
+  - id: c4_text
+    type: text
+    text: "{{card4}}"
+    x: 791
+    y: 1295
+    w: 254
+    h: 74
+    font: "{{theme.font}}"
+    size: 21
+    color: "{{theme.text}}"
+    align: center
+    line_height: 1.22
+
+  # ── CTA bar text (y=1417..1526) ───────────────────────────────────────────
+  - id: cta_main
+    type: text
+    text: "{{cta_main}}"
+    x: 175
+    y: 1436
+    w: 730
+    h: 54
+    font: "{{theme.font}}"
+    bold: true
+    size: 44
+    color: "{{theme.white}}"
+    align: center
+
+  - id: cta_sub
+    type: text
+    text: "{{cta_sub}}"
+    x: 175
+    y: 1491
+    w: 730
+    h: 32
+    font: "{{theme.font}}"
+    size: 17
+    color: "{{theme.gold}}"
+    align: center
+    letter_spacing: 2

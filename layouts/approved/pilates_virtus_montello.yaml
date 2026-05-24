@@ -1,0 +1,232 @@
+output_name: pilates_virtus_montello
+
+canvas:
+  width: 1080
+  height: 1530
+  background: "#F7F2EB"
+
+assets_base: "assets/images"
+
+layers:
+  - id: bg
+    type: rect
+    x: 0
+    y: 0
+    w: 1080
+    h: 1530
+    fill: "#F7F2EB"
+
+  - id: top_bar
+    type: rect
+    x: 0
+    y: 0
+    w: 1080
+    h: 34
+    fill: "#8B1A2B"
+
+  - id: logo
+    type: image
+    src: "logo.png"
+    x: 76
+    y: 72
+    w: 120
+    h: 120
+    fit: contain
+
+  - id: brand
+    type: text
+    text: "VIRTUS"
+    x: 215
+    y: 92
+    w: 500
+    h: 44
+    font: "Montserrat"
+    bold: true
+    size: 34
+    color: "#2C2C2C"
+    align: left
+
+  - id: brand_subtitle
+    type: text
+    text: "Centro movimento e benessere"
+    x: 215
+    y: 142
+    w: 650
+    h: 36
+    font: "Montserrat"
+    size: 22
+    color: "#7A6F68"
+    align: left
+
+  - id: hero_card
+    type: rect
+    x: 76
+    y: 245
+    w: 928
+    h: 390
+    fill: "#FFFFFF"
+    radius: 30
+
+  - id: hero
+    type: image
+    src: "hero.jpg"
+    x: 100
+    y: 270
+    w: 880
+    h: 340
+    fit: cover
+
+  - id: eyebrow
+    type: text
+    text: "NUOVO CORSO"
+    x: 80
+    y: 700
+    w: 920
+    h: 42
+    font: "Montserrat"
+    bold: true
+    size: 26
+    color: "#8B1A2B"
+    align: center
+
+  - id: title
+    type: text
+    text: "PILATES"
+    x: 80
+    y: 748
+    w: 920
+    h: 96
+    font: "Montserrat"
+    bold: true
+    size: 78
+    color: "#2C2C2C"
+    align: center
+
+  - id: subtitle
+    type: text
+    text: "Postura • Forza • Controllo"
+    x: 100
+    y: 845
+    w: 880
+    h: 46
+    font: "Montserrat"
+    size: 30
+    color: "#7A6F68"
+    align: center
+
+  - id: info_box
+    type: rect
+    x: 135
+    y: 940
+    w: 810
+    h: 185
+    fill: "#FFFFFF"
+    radius: 28
+
+  - id: days
+    type: text
+    text: "LUNEDÌ E VENERDÌ"
+    x: 165
+    y: 977
+    w: 750
+    h: 48
+    font: "Montserrat"
+    bold: true
+    size: 38
+    color: "#8B1A2B"
+    align: center
+
+  - id: time
+    type: text
+    text: "16:00 – 17:00"
+    x: 165
+    y: 1035
+    w: 750
+    h: 46
+    font: "Montserrat"
+    bold: true
+    size: 34
+    color: "#2C2C2C"
+    align: center
+
+  - id: place
+    type: text
+    text: "Via Montello"
+    x: 165
+    y: 1085
+    w: 750
+    h: 38
+    font: "Montserrat"
+    size: 27
+    color: "#7A6F68"
+    align: center
+
+  - id: benefit_1
+    type: text
+    text: "• Migliora postura e mobilità"
+    x: 190
+    y: 1175
+    w: 700
+    h: 34
+    font: "Montserrat"
+    size: 25
+    color: "#2C2C2C"
+    align: left
+
+  - id: benefit_2
+    type: text
+    text: "• Rinforza addome, schiena e controllo"
+    x: 190
+    y: 1220
+    w: 700
+    h: 34
+    font: "Montserrat"
+    size: 25
+    color: "#2C2C2C"
+    align: left
+
+  - id: benefit_3
+    type: text
+    text: "• Allenamento dolce, preciso e progressivo"
+    x: 190
+    y: 1265
+    w: 700
+    h: 34
+    font: "Montserrat"
+    size: 25
+    color: "#2C2C2C"
+    align: left
+
+  - id: cta_box
+    type: rect
+    x: 135
+    y: 1360
+    w: 810
+    h: 88
+    fill: "#8B1A2B"
+    radius: 24
+
+  - id: cta
+    type: text
+    text: "PRENOTA LA TUA PROVA"
+    x: 135
+    y: 1384
+    w: 810
+    h: 44
+    font: "Montserrat"
+    bold: true
+    size: 33
+    color: "#FFFFFF"
+    align: center
+
+  - id: footer
+    type: text
+    text: "Info e prenotazioni  |  3518899843  |  @virtus_group_"
+    x: 80
+    y: 1470
+    w: 920
+    h: 34
+    font: "Montserrat"
+    size: 21
+    color: "#7A6F68"
+    align: center

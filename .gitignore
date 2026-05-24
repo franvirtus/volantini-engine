@@ -3,3 +3,14 @@ output/
 __pycache__/
 *.pyc
 .env
+
+# File temporanei
+*.tmp
+*.bak
+
+# Font di sistema (non ridistribuibili)
+fonts/*.ttf
+fonts/*.otf
+
+# Immagini di output generate
+assets/images/volantino.png

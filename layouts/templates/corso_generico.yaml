@@ -1,0 +1,306 @@
+# Template generico per corsi Virtus.
+# Usa con: python generate_layout.py layouts/templates/corso_generico.yaml --data campaigns/xxx.yaml --format png
+# Oppure:  python generate_layout.py layouts/templates/corso_generico.yaml --var corso_nome=YOGA --var orario="18:00-19:00"
+
+output_name: "{{output_name}}"
+
+# ── Paletta colori e font — cambia qui per tutta la pagina ───────────────────
+theme:
+  primary:     "#8B1A2B"
+  dark:        "#2C2C2C"
+  muted:       "#7A6F68"
+  light_bg:    "#F7F2EB"
+  white:       "#FFFFFF"
+  font_head:   "Georgia"
+  font_body:   "Montserrat"
+
+# ── Variabili di contenuto — fornite da --data o --var ───────────────────────
+variables:
+  output_name:  "corso_output"
+  corso_nome:   "NOME CORSO"
+  corso_tag:    "NUOVO CORSO"
+  sottotitolo:  "Descrizione breve del corso"
+  giorni:       "Lunedì e Venerdì"
+  orario:       "18:00 – 19:00"
+  sede:         "Via Montello"
+  cta:          "PRENOTA LA TUA PROVA"
+  footer:       "Info e prenotazioni  |  3518899843  |  @virtus_group_"
+  hero_img:     "hero.jpg"
+
+canvas:
+  preset: volantino          # 1080×1530 — altri: instagram_story, a4_portrait, instagram_square
+  background: "{{theme.light_bg}}"
+
+assets_base: "assets/images"
+
+layers:
+  # Sfondo
+  - id: bg
+    type: rect
+    x: 0
+    y: 0
+    w: 1080
+    h: 1530
+    fill: "{{theme.light_bg}}"
+
+  # Barra superiore
+  - id: top_bar
+    type: rect
+    x: 0
+    y: 0
+    w: 1080
+    h: 8
+    fill: "{{theme.primary}}"
+
+  # Logo
+  - id: logo
+    type: image
+    src: "logo.png"
+    x: 76
+    y: 60
+    w: 100
+    h: 100
+    fit: contain
+
+  # Brand name
+  - id: brand
+    type: text
+    text: "VIRTUS"
+    x: 195
+    y: 82
+    w: 500
+    h: 44
+    font: "{{theme.font_body}}"
+    bold: true
+    size: 30
+    color: "{{theme.dark}}"
+    align: left
+    letter_spacing: 4
+
+  # Brand subtitle
+  - id: brand_sub
+    type: text
+    text: "Centro movimento e benessere"
+    x: 195
+    y: 128
+    w: 650
+    h: 32
+    font: "{{theme.font_body}}"
+    size: 20
+    color: "{{theme.muted}}"
+    align: left
+
+  # Foto hero
+  - id: hero_card
+    type: rect
+    x: 76
+    y: 215
+    w: 928
+    h: 370
+    fill: "{{theme.white}}"
+    radius: 24
+    shadow:
+      color: "#00000018"
+      blur: 16
+      offset_x: 0
+      offset_y: 6
+
+  - id: hero
+    type: image
+    src: "{{hero_img}}"
+    x: 100
+    y: 230
+    w: 880
+    h: 340
+    fit: cover
+
+  # Tag corso
+  - id: tag
+    type: text
+    text: "{{corso_tag}}"
+    x: 80
+    y: 660
+    w: 920
+    h: 38
+    font: "{{theme.font_body}}"
+    bold: true
+    size: 24
+    color: "{{theme.primary}}"
+    align: center
+    letter_spacing: 3
+
+  # Titolo corso
+  - id: title
+    type: text
+    text: "{{corso_nome}}"
+    x: 60
+    y: 700
+    w: 960
+    h: 110
+    font: "{{theme.font_head}}"
+    bold: true
+    size: 88
+    color: "{{theme.dark}}"
+    align: center
+
+  # Sottotitolo
+  - id: subtitle
+    type: text
+    text: "{{sottotitolo}}"
+    x: 100
+    y: 815
+    w: 880
+    h: 50
+    font: "{{theme.font_head}}"
+    italic: true
+    size: 28
+    color: "{{theme.muted}}"
+    align: center
+
+  # Box info
+  - id: info_box
+    type: rect
+    x: 135
+    y: 915
+    w: 810
+    h: 195
+    fill: "{{theme.white}}"
+    radius: 28
+    shadow:
+      color: "#00000014"
+      blur: 12
+      offset_x: 0
+      offset_y: 4
+
+  # Icona giorno
+  - id: icon_calendar
+    type: icon
+    name: calendar
+    x: 160
+    y: 932
+    w: 36
+    h: 36
+    color: "{{theme.primary}}"
+
+  # Giorni
+  - id: days
+    type: text
+    text: "{{giorni}}"
+    x: 205
+    y: 935
+    w: 700
+    h: 44
+    font: "{{theme.font_body}}"
+    bold: true
+    size: 36
+    color: "{{theme.primary}}"
+    align: left
+
+  # Icona orario
+  - id: icon_clock
+    type: icon
+    name: clock
+    x: 160
+    y: 992
+    w: 32
+    h: 32
+    color: "{{theme.dark}}"
+
+  # Orario
+  - id: time
+    type: text
+    text: "{{orario}}"
+    x: 205
+    y: 990
+    w: 700
+    h: 44
+    font: "{{theme.font_body}}"
+    bold: true
+    size: 32
+    color: "{{theme.dark}}"
+    align: left
+
+  # Icona sede
+  - id: icon_pin
+    type: icon
+    name: pin
+    x: 160
+    y: 1050
+    w: 30
+    h: 30
+    color: "{{theme.muted}}"
+
+  # Sede
+  - id: place
+    type: text
+    text: "{{sede}}"
+    x: 205
+    y: 1050
+    w: 700
+    h: 36
+    font: "{{theme.font_body}}"
+    size: 26
+    color: "{{theme.muted}}"
+    align: left
+
+  # Linea separatore
+  - id: sep
+    type: line
+    x1: 135
+    y1: 1155
+    x2: 945
+    y2: 1155
+    color: "#E0D8D0"
+    width: 1
+
+  # CTA box
+  - id: cta_box
+    type: rect
+    x: 135
+    y: 1330
+    w: 810
+    h: 92
+    fill: "{{theme.primary}}"
+    radius: 26
+    shadow:
+      color: "#8B1A2B44"
+      blur: 18
+      offset_x: 0
+      offset_y: 6
+
+  # CTA text
+  - id: cta
+    type: text
+    text: "{{cta}}"
+    x: 135
+    y: 1358
+    w: 810
+    h: 44
+    font: "{{theme.font_body}}"
+    bold: true
+    size: 30
+    color: "{{theme.white}}"
+    align: center
+    letter_spacing: 2
+
+  # Footer
+  - id: footer
+    type: text
+    text: "{{footer}}"
+    x: 80
+    y: 1458
+    w: 920
+    h: 32
+    font: "{{theme.font_body}}"
+    size: 19
+    color: "{{theme.muted}}"
+    align: center
+
+  # Barra inferiore
+  - id: bottom_bar
+    type: rect
+    x: 0
+    y: 1522
+    w: 1080
+    h: 8
+    fill: "{{theme.primary}}"
