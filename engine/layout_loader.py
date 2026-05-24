@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import yaml
@@ -18,7 +19,12 @@ def load_layout(layout_path):
 
     try:
         with path.open("r", encoding="utf-8") as file:
-            layout = yaml.safe_load(file)
+            if path.suffix.lower() == ".json":
+                layout = json.load(file)
+            else:
+                layout = yaml.safe_load(file)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Layout JSON non valido in {path}: {exc}") from exc
     except yaml.YAMLError as exc:
         raise ValueError(f"Layout YAML non valido in {path}: {exc}") from exc
 
@@ -69,4 +75,3 @@ def validate_layer(layer, index):
         require_keys(layer, index, ["src"])
     elif layer_type == "line":
         require_keys(layer, index, ["x1", "y1", "x2", "y2"])
-

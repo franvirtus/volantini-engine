@@ -76,9 +76,9 @@ def parse_color(value):
 
 def opacity_to_transparency(opacity):
     if opacity is None:
-        return 0
+        return 0.0
     opacity = max(0.0, min(1.0, float(opacity)))
-    return int(round((1.0 - opacity) * 100))
+    return 1.0 - opacity
 
 
 def add_rect(slide, layer, scale):

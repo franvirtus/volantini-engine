@@ -2,7 +2,7 @@
 
 Il layout engine generico esiste per trasformare una bozza approvata in un PowerPoint modificabile senza dover creare ogni volta un template rigido.
 
-Il flusso previsto e:
+Il flusso previsto è:
 
 1. L'utente chiede un volantino tramite prompt.
 2. ChatGPT genera una bozza immagine.
@@ -18,7 +18,7 @@ Il sistema legacy usa:
 template.pptx + campaign.yaml -> output.pptx
 ```
 
-E utile quando esiste gia un template PowerPoint con placeholder `{{...}}` e shape nominate.
+È utile quando esiste già un template PowerPoint con placeholder `{{...}}` e shape nominate.
 
 Il nuovo layout engine usa:
 
@@ -26,9 +26,9 @@ Il nuovo layout engine usa:
 layout.yaml -> output.pptx
 ```
 
-E utile quando il design nasce da una bozza approvata e deve essere ricostruito come elementi PowerPoint modificabili: testi, immagini, rettangoli e linee.
+È utile quando il design nasce da una bozza approvata e deve essere ricostruito come elementi PowerPoint modificabili: testi, immagini, rettangoli e linee.
 
-I due sistemi convivono. `generate.py` resta il comando legacy. `generate_layout.py` e il comando del layout engine.
+I due sistemi convivono. `generate.py` resta il comando legacy. `generate_layout.py` è il comando del layout engine.
 
 ## Struttura Layout
 
@@ -78,6 +78,8 @@ Le coordinate sono pixel virtuali. Il renderer le converte internamente in polli
 ```
 
 Genera una forma PowerPoint modificabile.
+
+Nota: il campo `radius` oggi abilita gli angoli arrotondati, ma non controlla ancora con precisione il raggio in pixel.
 
 ### Text
 
