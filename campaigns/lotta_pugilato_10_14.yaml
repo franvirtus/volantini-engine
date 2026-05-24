@@ -1,0 +1,33 @@
+template: combat_light_vertical.pptx
+output_name: lotta_pugilato_10_14
+
+texts:
+  TITLE_1: "LOTTA"
+  TITLE_2: "PUGILATO"
+  AGE: "DAI 10 AI 14 ANNI"
+  BENEFITS_TITLE: "COSA TI PORTERAI DENTRO"
+  BENEFIT_1_TITLE: "DISCIPLINA"
+  BENEFIT_1_TEXT: "Impari rispetto e controllo."
+  BENEFIT_2_TITLE: "SICUREZZA"
+  BENEFIT_2_TEXT: "Ambiente sicuro e controllato."
+  BENEFIT_3_TITLE: "FORZA"
+  BENEFIT_3_TEXT: "Sviluppi forza fisica e controllo."
+  BENEFIT_4_TITLE: "RESISTENZA"
+  BENEFIT_4_TEXT: "Migliora fiato ed energia."
+  BENEFIT_5_TITLE: "FOCUS"
+  BENEFIT_5_TEXT: "Alleni concentrazione e mentalità."
+  BENEFIT_6_TITLE: "AUTOSTIMA"
+  BENEFIT_6_TEXT: "Diventi più sicuro di te stesso."
+  CTA_MAIN: "PROVA GRATUITA -"
+  CTA_SUB: "LA PRIMA LEZIONE TI ASPETTIAMO!"
+  ADDRESS: "Via Corfù 71"
+  PHONE: "3518899843"
+  INSTAGRAM: "@virtus_group_"
+
+images:
+  LOGO_TOP: "assets/images/logo.png"
+  LOGO_BOTTOM: "assets/images/logo.png"
+  IMAGE_HERO: "assets/images/hero.jpg"
+  IMAGE_GALLERY_1: "assets/images/gallery_1.jpg"
+  IMAGE_GALLERY_2: "assets/images/gallery_2.jpg"
+  IMAGE_GALLERY_3: "assets/images/gallery_3.jpg"

@@ -1,124 +1,149 @@
 # VolantiniEngine
 
-Motore Python generico per generare volantini PowerPoint modificabili per Virtus.
+Motore Python semplice per generare volantini PowerPoint modificabili per Virtus.
 
-Il motore prende:
+Il progetto prende:
 
-- un template PowerPoint master
-- un file JSON con i contenuti
+- un template PowerPoint `.pptx`
+- un config contenuti in JSON o YAML
 - immagini dalla cartella `assets/images/`
 
-e genera un file `.pptx` modificabile in `output/`.
+e genera sempre un PowerPoint modificabile in `output/`.
 
-Il design resta nel template PowerPoint. Il programma sostituisce solo placeholder testuali e immagini nominate.
+Non e una web app e non contiene editor visuale: il design resta nel template PowerPoint, il motore sostituisce solo testi e immagini.
 
-## Struttura progetto
+## Struttura
 
 ```text
 VolantiniEngine/
+  engine/
+    __init__.py
+    config_loader.py
+    pptx_renderer.py
+    exporters.py
+  campaigns/
+    lotta_pugilato_10_14.yaml
   templates/
-    combat_dark_vertical.pptx
+    combat_light_vertical.pptx
   assets/
     images/
   data/
     examples/
-      boxe_10_14.json
-      bjj_6_9.json
   output/
   generate.py
   requirements.txt
   README.md
 ```
 
-## Installazione Windows
+La cartella `output/` contiene file generati e non va tracciata da Git.
 
-Apri PowerShell nella cartella del progetto:
+## Installazione
+
+Da PowerShell:
 
 ```powershell
 cd "C:\Users\sense\OneDrive\Documents\Virtus\VolantiniEngine"
-```
-
-Crea l'ambiente virtuale:
-
-```powershell
 py -m venv .venv
-```
-
-Attiva l'ambiente virtuale:
-
-```powershell
 .\.venv\Scripts\Activate.ps1
-```
-
-Installa le dipendenze:
-
-```powershell
 python -m pip install -r requirements.txt
 ```
 
-Metti il template PowerPoint in:
+## Uso YAML
 
-```text
-templates/combat_dark_vertical.pptx
+Comando base:
+
+```powershell
+python generate.py campaigns/lotta_pugilato_10_14.yaml
 ```
 
-Metti le immagini in:
+Con cartella output personalizzata:
 
-```text
-assets/images/
+```powershell
+python generate.py campaigns/lotta_pugilato_10_14.yaml --out-dir output
 ```
 
-Genera un volantino:
+Con export PDF/PNG:
+
+```powershell
+python generate.py campaigns/lotta_pugilato_10_14.yaml --pdf --png
+```
+
+PDF e PNG richiedono Windows, PowerPoint installato e `pywin32`. Se `pywin32` non e disponibile, il PPTX viene comunque generato e viene stampato un warning.
+
+## Uso JSON Legacy
+
+Gli esempi JSON in `data/examples/` restano supportati:
 
 ```powershell
 python generate.py data/examples/boxe_10_14.json
 ```
 
-Il file generato sara in:
+## Formato YAML
+
+```yaml
+template: combat_light_vertical.pptx
+output_name: lotta_pugilato_10_14
+
+texts:
+  TITLE_1: "LOTTA"
+  TITLE_2: "PUGILATO"
+  AGE: "DAI 10 AI 14 ANNI"
+  CTA_MAIN: "PROVA GRATUITA -"
+  CTA_SUB: "LA PRIMA LEZIONE TI ASPETTIAMO!"
+  PHONE: "3518899843"
+  INSTAGRAM: "@virtus_group_"
+  ADDRESS: "Via Corfu 71"
+
+images:
+  LOGO_TOP: "assets/images/logo.png"
+  LOGO_BOTTOM: "assets/images/logo.png"
+  IMAGE_HERO: "assets/images/hero.jpg"
+  IMAGE_GALLERY_1: "assets/images/gallery_1.jpg"
+```
+
+Le chiavi in `texts` devono corrispondere ai placeholder presenti nel template, senza graffe. Per esempio il placeholder PowerPoint `{{TITLE_1}}` viene sostituito dalla chiave YAML `TITLE_1`.
+
+## Placeholder Testo
+
+Nel template PowerPoint inserisci testi modificabili come caselle testo:
 
 ```text
-output/boxe_10_14.pptx
+{{TITLE_1}}
+{{TITLE_2}}
+{{AGE}}
+{{CTA_MAIN}}
+{{PHONE}}
 ```
 
-Genera anche PDF, se PowerPoint e installato e `pywin32` e disponibile:
+Il motore sostituisce anche placeholder spezzati in piu run PowerPoint, quando sono nello stesso paragrafo/casella testo.
 
-```powershell
-python generate.py data/examples/boxe_10_14.json --pdf
+## Placeholder Immagini
+
+Le immagini vengono sostituite cercando il nome della shape PowerPoint.
+
+Esempi:
+
+```text
+IMAGE_HERO
+IMAGE_GALLERY_1
+IMAGE_GALLERY_2
+LOGO_TOP
+LOGO_BOTTOM
 ```
 
-Genera anche PNG, se PowerPoint e installato e `pywin32` e disponibile:
+Nel template:
 
-```powershell
-python generate.py data/examples/boxe_10_14.json --png
-```
+1. Inserisci una forma o immagine segnaposto.
+2. Apri `Home > Disponi > Riquadro di selezione`.
+3. Rinomina la shape con il nome richiesto, per esempio `IMAGE_HERO`.
 
-Genera PPTX, PDF e PNG insieme:
+Il motore elimina la shape placeholder e inserisce l'immagine nello stesso punto, mantenendo posizione e dimensioni.
 
-```powershell
-python generate.py data/examples/boxe_10_14.json --pdf --png
-```
+Se un file immagine manca, il PPTX viene comunque generato e viene stampato un warning chiaro.
 
-## Come preparare il template PowerPoint
+## Template Light
 
-1. Crea il design del volantino direttamente in PowerPoint.
-2. Inserisci i testi come caselle testo PowerPoint modificabili.
-3. Scrivi i placeholder dentro le caselle testo, per esempio `{{TITLE}}`, `{{CTA}}`, `{{PHONE}}`.
-4. Non usare testo dentro immagini.
-5. Usa solo caselle testo PowerPoint per i contenuti che vuoi modificare.
-6. Inserisci immagini o forme segnaposto dove vuoi sostituire immagini.
-7. Dai alle immagini o forme segnaposto nomi precisi come `IMAGE_HERO`, `IMAGE_GALLERY_1`, `IMAGE_GALLERY_2`, `IMAGE_GALLERY_3`, `IMAGE_GALLERY_4`, `LOGO`.
-
-Per rinominare una forma o immagine in PowerPoint:
-
-1. Vai su `Home`.
-2. Apri `Disponi`.
-3. Scegli `Riquadro di selezione`.
-4. Clicca sul nome dell'elemento.
-5. Rinominalo con uno dei nomi previsti.
-
-## Creare il template light
-
-Per ricostruire il template verticale chiaro ispirato alla reference:
+Per rigenerare il template chiaro modificabile:
 
 ```powershell
 python build_template_light.py
@@ -130,77 +155,16 @@ Il file viene creato in:
 templates/combat_light_vertical.pptx
 ```
 
-## Placeholder testo supportati
+## Git
+
+`.gitignore` deve includere:
 
 ```text
-{{TITLE}}
-{{SUBTITLE}}
-{{AGE}}
-{{CLAIM}}
-{{DESCRIPTION}}
-{{CTA}}
-{{PHONE}}
-{{INSTAGRAM}}
-{{ADDRESS}}
-{{BENEFIT_1_TITLE}}
-{{BENEFIT_1_TEXT}}
-{{BENEFIT_2_TITLE}}
-{{BENEFIT_2_TEXT}}
-{{BENEFIT_3_TITLE}}
-{{BENEFIT_3_TEXT}}
-{{BENEFIT_4_TITLE}}
-{{BENEFIT_4_TEXT}}
-{{BENEFIT_5_TITLE}}
-{{BENEFIT_5_TEXT}}
-{{BENEFIT_6_TITLE}}
-{{BENEFIT_6_TEXT}}
+.venv/
+output/
+__pycache__/
+*.pyc
+.env
 ```
 
-Puoi aggiungere altri placeholder nel JSON. Il motore sostituisce qualsiasi chiave presente in `texts` usando il formato `{{CHIAVE}}`.
-
-## Placeholder immagini supportati
-
-```text
-IMAGE_HERO
-IMAGE_GALLERY_1
-IMAGE_GALLERY_2
-IMAGE_GALLERY_3
-IMAGE_GALLERY_4
-LOGO
-```
-
-Puoi aggiungere altri nomi immagine nel JSON. Il motore cerca forme o immagini con lo stesso nome nel template.
-
-Se un'immagine indicata nel JSON non esiste, il motore lascia il placeholder nel template e stampa un warning.
-
-## Formato JSON
-
-```json
-{
-  "template": "combat_dark_vertical.pptx",
-  "output_name": "boxe_10_14",
-  "texts": {
-    "TITLE": "BOXE",
-    "SUBTITLE": "CORSO DI PUGILATO",
-    "CTA": "PRENOTA LA TUA PROVA GRATUITA"
-  },
-  "images": {
-    "IMAGE_HERO": "assets/images/boxe_hero.jpg",
-    "LOGO": "assets/images/logo_virtus.png"
-  }
-}
-```
-
-## Output PNG/PDF
-
-Il motore genera sempre il PowerPoint modificabile.
-
-L'export automatico PDF/PNG usa PowerPoint installato su Windows tramite automazione COM.
-
-Se usi `--pdf` o `--png` e vedi un warning su `pywin32`, installalo con:
-
-```powershell
-python -m pip install pywin32
-```
-
-Senza PowerPoint o senza `pywin32`, il file `.pptx` modificabile viene comunque generato.
+Non aggiungere file generati in `output/` ai commit.
