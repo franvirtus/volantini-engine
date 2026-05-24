@@ -8,9 +8,8 @@ __pycache__/
 *.tmp
 *.bak
 
-# Font di sistema (non ridistribuibili)
-fonts/*.ttf
-fonts/*.otf
+# Font di sistema Windows (non ridistribuibili — NON includere Georgia, Arial ecc.)
+# I font bundled open-source (Lora, Liberation) sono tracciati da Git.
 
 # Immagini di output generate
 assets/images/volantino.png

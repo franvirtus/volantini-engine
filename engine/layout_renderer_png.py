@@ -11,21 +11,35 @@ _FONT_CACHE: dict = {}
 _SYSTEM_FONT_DIRS = [
     Path("C:/Windows/Fonts"),
     Path(os.environ.get("LOCALAPPDATA", "")) / "Microsoft" / "Windows" / "Fonts",
+    # Linux/Mac system paths
+    Path("/usr/share/fonts/truetype"),
+    Path("/usr/share/fonts"),
+    Path("/Library/Fonts"),
+    Path(os.path.expanduser("~")) / "Library" / "Fonts",
 ]
 
 # (family_lower) → { (bold, italic) → [filename, ...] }
+# I file Lora-*.ttf sono bundled nella cartella fonts/ del progetto
+# e fungono da fallback cross-platform per Georgia.
 _FONT_FILES: dict = {
     "arial": {
-        (False, False): ["arial.ttf"],
-        (True,  False): ["arialbd.ttf"],
-        (False, True):  ["ariali.ttf"],
-        (True,  True):  ["arialbi.ttf"],
+        (False, False): ["arial.ttf", "LiberationSans-Regular.ttf"],
+        (True,  False): ["arialbd.ttf", "LiberationSans-Bold.ttf"],
+        (False, True):  ["ariali.ttf", "LiberationSans-Italic.ttf"],
+        (True,  True):  ["arialbi.ttf", "LiberationSans-BoldItalic.ttf"],
     },
     "georgia": {
-        (False, False): ["georgia.ttf"],
-        (True,  False): ["georgiab.ttf"],
-        (False, True):  ["georgiai.ttf"],
-        (True,  True):  ["georgiaz.ttf"],
+        # Prima cerca Georgia di sistema, poi Lora bundled (open-source, SIL OFL)
+        (False, False): ["georgia.ttf",  "Lora-Regular.ttf"],
+        (True,  False): ["georgiab.ttf", "Lora-Bold.ttf"],
+        (False, True):  ["georgiai.ttf", "Lora-Italic.ttf"],
+        (True,  True):  ["georgiaz.ttf", "Lora-BoldItalic.ttf"],
+    },
+    "lora": {
+        (False, False): ["Lora-Regular.ttf"],
+        (True,  False): ["Lora-Bold.ttf"],
+        (False, True):  ["Lora-Italic.ttf"],
+        (True,  True):  ["Lora-BoldItalic.ttf"],
     },
     "montserrat": {
         (False, False): ["Montserrat-Regular.ttf",  "Montserrat-VariableFont_wght.ttf"],
@@ -34,10 +48,10 @@ _FONT_FILES: dict = {
         (True,  True):  ["Montserrat-BoldItalic.ttf", "Montserrat-Italic-VariableFont_wght.ttf"],
     },
     "times new roman": {
-        (False, False): ["times.ttf"],
-        (True,  False): ["timesbd.ttf"],
-        (False, True):  ["timesi.ttf"],
-        (True,  True):  ["timesbi.ttf"],
+        (False, False): ["times.ttf", "LiberationSerif-Regular.ttf"],
+        (True,  False): ["timesbd.ttf", "LiberationSerif-Bold.ttf"],
+        (False, True):  ["timesi.ttf", "LiberationSerif-Italic.ttf"],
+        (True,  True):  ["timesbi.ttf", "LiberationSerif-BoldItalic.ttf"],
     },
 }
 

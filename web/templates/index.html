@@ -3,191 +3,438 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VolantiniEngine — Virtus</title>
+  <title>VolantiniEngine</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            green:  { DEFAULT: '#254A18', light: '#3D6A28', dark: '#1A3810' },
-            gold:   { DEFAULT: '#C5A635', light: '#D4B84A' },
-            cream:  { DEFAULT: '#F0EAD8', dark: '#E0D8C0' },
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    body { background: #F0EAD8; font-family: Georgia, serif; }
-    .field-label { font-size: 0.78rem; font-weight: 600; color: #254A18; text-transform: uppercase; letter-spacing: 0.05em; }
-    .field-input {
-      width: 100%; padding: 0.5rem 0.75rem;
-      border: 1.5px solid #C5A635; border-radius: 8px;
-      background: #fff; font-size: 0.9rem; color: #1A2808;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .field-input:focus { outline: none; border-color: #254A18; box-shadow: 0 0 0 3px #254A1820; }
-    .btn-primary {
-      background: #254A18; color: #fff; font-weight: 700;
-      padding: 0.65rem 1.5rem; border-radius: 999px; border: none;
-      cursor: pointer; font-size: 1rem; letter-spacing: 0.04em;
-      transition: background 0.2s, transform 0.1s;
-    }
-    .btn-primary:hover { background: #3D6A28; }
-    .btn-primary:active { transform: scale(0.97); }
-    .btn-gold {
-      background: #C5A635; color: #1A2808; font-weight: 700;
-      padding: 0.65rem 1.5rem; border-radius: 999px; border: none;
-      cursor: pointer; font-size: 1rem; letter-spacing: 0.04em;
-      transition: background 0.2s, transform 0.1s;
-    }
-    .btn-gold:hover { background: #D4B84A; }
-    .btn-gold:active { transform: scale(0.97); }
-    #preview-img { max-height: 80vh; border-radius: 12px; box-shadow: 0 8px 32px #00000030; }
-    .spinner { display: none; width: 32px; height: 32px; border: 3px solid #C5A635; border-top-color: #254A18; border-radius: 50%; animation: spin 0.7s linear infinite; margin: auto; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    select.field-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23254A18' stroke-width='2' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; }
+    body { background:#F0EAD8; font-family: Georgia, serif; }
+
+    /* Tab */
+    .tab-btn { padding:.5rem 1.2rem; border-radius:8px 8px 0 0; cursor:pointer; font-size:.85rem; font-weight:600; letter-spacing:.04em; border:none; transition:background .15s; }
+    .tab-btn.active  { background:#254A18; color:#fff; }
+    .tab-btn.inactive{ background:#D8D0BC; color:#254A18; }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    /* Inputs */
+    .lbl { font-size:.72rem; font-weight:700; color:#254A18; text-transform:uppercase; letter-spacing:.06em; display:block; margin-bottom:.25rem; }
+    .inp { width:100%; padding:.45rem .7rem; border:1.5px solid #C5A635; border-radius:8px; background:#fff; font-size:.875rem; color:#1A2808; transition:border-color .2s; }
+    .inp:focus { outline:none; border-color:#254A18; box-shadow:0 0 0 3px #254A1818; }
+    textarea.inp { resize:vertical; font-family:monospace; font-size:.78rem; line-height:1.5; }
+
+    /* Buttons */
+    .btn-green { background:#254A18; color:#fff; font-weight:700; padding:.6rem 1.2rem; border-radius:999px; border:none; cursor:pointer; font-size:.9rem; transition:background .15s; }
+    .btn-green:hover { background:#3D6A28; }
+    .btn-gold  { background:#C5A635; color:#1A2808; font-weight:700; padding:.6rem 1.2rem; border-radius:999px; border:none; cursor:pointer; font-size:.9rem; transition:background .15s; }
+    .btn-gold:hover  { background:#D4B84A; }
+    .btn-sm    { padding:.35rem .9rem; font-size:.8rem; border-radius:999px; border:none; cursor:pointer; font-weight:600; }
+
+    /* Preview */
+    #preview-img { max-height:82vh; border-radius:10px; box-shadow:0 8px 32px #0003; }
+    .spinner { display:none; width:36px; height:36px; border:3px solid #C5A635; border-top-color:#254A18; border-radius:50%; animation:spin .7s linear infinite; margin:auto; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Modal */
+    #modal-overlay { display:none; position:fixed; inset:0; background:#0007; z-index:50; }
+    #modal-box { background:#fff; border-radius:16px; max-width:700px; width:90%; margin:5vh auto; padding:2rem; max-height:90vh; overflow-y:auto; }
+    .code-block { background:#1A2808; color:#C5A635; padding:1rem; border-radius:8px; font-family:monospace; font-size:.78rem; line-height:1.6; white-space:pre-wrap; }
+
+    /* Upload zone */
+    .upload-zone { border:2px dashed #C5A635; border-radius:10px; padding:1rem; text-align:center; cursor:pointer; transition:background .15s; }
+    .upload-zone:hover { background:#FFF8E8; }
+
+    /* Field row */
+    .field-row { margin-bottom:.75rem; }
   </style>
 </head>
 <body class="min-h-screen">
 
-  <!-- Header -->
-  <header class="bg-green text-white px-6 py-4 flex items-center gap-4 shadow-lg">
-    <div>
-      <div class="text-gold font-bold tracking-widest text-lg">V I R T U S</div>
-      <div class="text-white/70 text-xs tracking-wider">VOLANTINI ENGINE</div>
+<!-- Header -->
+<header class="bg-[#254A18] text-white px-6 py-3 flex items-center justify-between shadow-lg">
+  <div>
+    <div class="text-[#C5A635] font-bold tracking-widest">V I R T U S</div>
+    <div class="text-white/60 text-xs tracking-wider">VOLANTINI ENGINE</div>
+  </div>
+  <button onclick="document.getElementById('modal-overlay').style.display='block'"
+          class="btn-sm bg-[#C5A635] text-[#1A2808]">
+    🤖 Guida AI
+  </button>
+</header>
+
+<!-- Layout principale -->
+<div class="flex min-h-[calc(100vh-56px)]">
+
+  <!-- ── Pannello sinistro ── -->
+  <div class="w-[400px] flex-shrink-0 overflow-y-auto p-5" style="background:#E8E0CC; border-right:1px solid #C5A63540;">
+
+    <!-- Tabs -->
+    <div class="flex gap-1 mb-0">
+      <button class="tab-btn active"   id="tab-yaml-btn"   onclick="switchTab('yaml')">📋 Incolla YAML</button>
+      <button class="tab-btn inactive" id="tab-tmpl-btn"   onclick="switchTab('template')">📁 Template salvato</button>
     </div>
-  </header>
 
-  <!-- Layout principale -->
-  <div class="flex gap-0 min-h-[calc(100vh-64px)]">
+    <div style="background:#fff; border-radius:0 8px 8px 8px; padding:1rem; margin-bottom:1rem;">
 
-    <!-- ── Pannello sinistro: form ── -->
-    <div class="w-[420px] flex-shrink-0 bg-cream-dark border-r border-gold/30 overflow-y-auto p-6" style="background:#E8E0CC;">
-      <form id="main-form">
+      <!-- ── TAB: Incolla YAML ── -->
+      <div id="tab-yaml" class="tab-panel active">
 
-        <!-- Selezione template -->
-        <div class="mb-6">
-          <div class="field-label mb-1">Template</div>
-          <select name="template_name" id="template-select" class="field-input" onchange="loadFields(this.value)">
-            {% for t in templates %}
-            <option value="{{ t.name }}" {% if t.name == active_template %}selected{% endif %}>
-              {{ t.label }}
-            </option>
+        <div class="field-row">
+          <label class="lbl">Incolla il YAML generato dall'AI</label>
+          <textarea class="inp" id="yaml-input" rows="10"
+            placeholder="output_name: &quot;mio_volantino&quot;&#10;&#10;variables:&#10;  template_img: &quot;template.jpg&quot;&#10;  titolo: &quot;CORSO DI YOGA&quot;&#10;  ...&#10;&#10;layers:&#10;  ..."></textarea>
+        </div>
+
+        <button onclick="parseYaml()"
+                class="btn-green btn-sm w-full mb-4">
+          ⚡ Carica campi dal YAML
+        </button>
+
+        <!-- Upload immagine template -->
+        <div class="field-row">
+          <label class="lbl">Immagine template (senza testi)</label>
+          <div class="upload-zone" onclick="document.getElementById('img-upload').click()">
+            <div id="upload-label" class="text-[#254A18]/60 text-sm">
+              Clicca per caricare JPG / PNG
+            </div>
+          </div>
+          <input type="file" id="img-upload" accept=".jpg,.jpeg,.png,.webp" class="hidden"
+                 onchange="uploadImage(this)">
+          <div id="upload-status" class="text-xs text-[#254A18] mt-1 hidden"></div>
+        </div>
+
+        <!-- Immagini disponibili -->
+        <div class="field-row">
+          <label class="lbl">Immagini disponibili in assets/images/</label>
+          <select class="inp" id="existing-images" onchange="setImageVar(this.value)">
+            <option value="">— seleziona —</option>
+            {% for img in images %}
+            <option value="{{ img }}">{{ img }}</option>
             {% endfor %}
           </select>
         </div>
 
-        <!-- Campi dinamici -->
-        <div id="fields-container">
-          {% for f in fields %}
-          <div class="mb-4">
-            <label class="field-label mb-1 block">{{ f.label }}</label>
-            <input type="text" name="{{ f.key }}" class="field-input"
-                   placeholder="{{ f.placeholder }}" value="{{ f.placeholder }}">
-          </div>
-          {% endfor %}
+        <!-- Campi dinamici dal YAML -->
+        <div id="yaml-fields" class="hidden">
+          <div class="border-t border-[#C5A635]/30 my-3"></div>
+          <div class="lbl mb-2">Modifica i valori</div>
+          <div id="yaml-fields-inner"></div>
         </div>
 
-        <!-- Bottoni -->
-        <div class="flex gap-3 mt-6 sticky bottom-0 py-4" style="background:#E8E0CC;">
-          <button type="button" class="btn-primary flex-1" onclick="generatePreview()">
-            ▶ Genera anteprima
-          </button>
-          <button type="button" class="btn-gold flex-1" onclick="downloadPng()">
-            ↓ Scarica PNG
-          </button>
-        </div>
-
-      </form>
-    </div>
-
-    <!-- ── Pannello destro: anteprima ── -->
-    <div class="flex-1 flex flex-col items-center justify-center p-8 gap-6">
-      <div id="spinner" class="spinner"></div>
-      <div id="preview-placeholder" class="text-green/40 text-center">
-        <div class="text-6xl mb-4">🖼️</div>
-        <div class="text-lg font-bold tracking-wide">Compila il form e clicca<br><span class="text-green">"Genera anteprima"</span></div>
       </div>
-      <img id="preview-img" src="" alt="Anteprima volantino" style="display:none;">
-      <div id="error-msg" class="text-red-600 text-sm font-bold hidden bg-red-50 border border-red-200 rounded-xl px-4 py-3 max-w-md text-center"></div>
+
+      <!-- ── TAB: Template salvato ── -->
+      <div id="tab-template" class="tab-panel">
+
+        <div class="field-row">
+          <label class="lbl">Template</label>
+          <select class="inp" id="template-select" onchange="loadTemplateFields(this.value)">
+            <option value="">— seleziona —</option>
+            {% for t in templates %}
+            <option value="{{ t.name }}">{{ t.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div id="template-fields"></div>
+
+      </div>
+
+    </div><!-- fine white box -->
+
+    <!-- Nome file output -->
+    <div class="field-row">
+      <label class="lbl">Nome file output</label>
+      <input type="text" class="inp" id="output-name" placeholder="volantino_output">
     </div>
 
+    <!-- Bottoni genera / scarica -->
+    <div class="flex gap-2 sticky bottom-0 py-3" style="background:#E8E0CC;">
+      <button onclick="generatePreview()" class="btn-green flex-1">▶ Genera anteprima</button>
+      <button onclick="downloadPng()"     class="btn-gold flex-1">↓ Scarica PNG</button>
+    </div>
+
+  </div><!-- fine pannello sinistro -->
+
+  <!-- ── Pannello destro: preview ── -->
+  <div class="flex-1 flex flex-col items-center justify-center p-8 gap-4">
+    <div class="spinner" id="spinner"></div>
+    <div id="preview-placeholder" class="text-[#254A18]/30 text-center">
+      <div class="text-7xl mb-4">🖼️</div>
+      <div class="text-lg font-bold tracking-wide">
+        Incolla il YAML e clicca<br>
+        <span class="text-[#254A18]/60">"Genera anteprima"</span>
+      </div>
+    </div>
+    <img id="preview-img" src="" alt="" style="display:none;">
+    <div id="error-msg" class="hidden bg-red-50 border border-red-300 text-red-700 text-sm rounded-xl px-4 py-3 max-w-md text-center"></div>
   </div>
 
-  <!-- Form nascosto per il download -->
-  <form id="download-form" method="POST" action="/download" style="display:none;"></form>
+</div><!-- fine layout -->
 
-  <script>
-    function getFormData() {
-      const form = document.getElementById('main-form');
-      const data = {};
-      new FormData(form).forEach((v, k) => { if (v.trim()) data[k] = v; });
-      return data;
+<!-- ── Modal Guida AI ── -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal-box">
+    <div class="flex justify-between items-start mb-4">
+      <h2 class="text-[#254A18] font-bold text-xl">🤖 Guida — Come usare l'AI</h2>
+      <button onclick="document.getElementById('modal-overlay').style.display='none'"
+              class="text-gray-400 hover:text-gray-700 text-2xl leading-none">&times;</button>
+    </div>
+
+    <p class="text-sm text-gray-600 mb-4">
+      Copia questi prompt e usali con qualsiasi AI (ChatGPT, Claude, Gemini...).
+      Prima approva il design completo, poi chiedi le due cose separatamente.
+    </p>
+
+    <div class="mb-5">
+      <div class="font-bold text-[#254A18] mb-2">STEP 1 — Chiedi l'immagine senza testi</div>
+      <div class="code-block" id="prompt-1">Genera lo stesso volantino ma SENZA nessun testo.
+Solo immagini, icone, sfondi, decorazioni grafiche.
+Nessuna parola scritta, nessuna lettera.
+Dimensioni: 1080x1530 pixel.</div>
+      <button onclick="copyText('prompt-1')" class="btn-sm bg-[#254A18] text-white mt-2">📋 Copia</button>
+    </div>
+
+    <div class="mb-5">
+      <div class="font-bold text-[#254A18] mb-2">STEP 2 — Chiedi il YAML overlay</div>
+      <div class="code-block" id="prompt-2">{% raw %}Analizza il volantino originale (con i testi) e genera il YAML overlay
+per il motore VolantiniEngine. Canvas: 1080x1530 pixel.
+
+Il formato YAML deve essere ESATTAMENTE questo:
+
+output_name: "nome_output"
+
+theme:
+  text:  "#COLORE_TESTO_SCURO"
+  white: "#FFFFFF"
+  gold:  "#COLORE_ORO"
+  green: "#COLORE_VERDE"
+  font:  "Georgia"
+
+variables:
+  output_name:  "nome_output"
+  template_img: "template.jpg"
+  titolo:       "Valore di default"
+  sottotitolo:  "Valore di default"
+  # aggiungi una variabile per ogni testo modificabile
+
+canvas:
+  width: 1080
+  height: 1530
+
+layers:
+
+  # Prima layer: sempre l'immagine base
+  - id: base
+    type: image
+    src: "{{template_img}}"
+    x: 0
+    y: 0
+    w: 1080
+    h: 1530
+    fit: fill
+
+  # Poi un layer per ogni testo:
+  - id: titolo
+    type: text
+    text: "{{titolo}}"
+    x: [pixel da sinistra]
+    y: [pixel dall'alto]
+    w: [larghezza area]
+    h: [altezza area]
+    font: "{{theme.font}}"
+    bold: true
+    size: [dimensione pt]
+    color: "{{theme.text}}"
+    align: left
+
+REGOLE:
+- Ogni testo modificabile deve avere la sua variabile in variables:
+- Misura le coordinate in pixel sul canvas 1080x1530
+- Usa {{theme.colore}} per i colori quando possibile
+- Il layer "base" con l'immagine deve essere SEMPRE il primo{% endraw %}</div>
+      <button onclick="copyText('prompt-2')" class="btn-sm bg-[#254A18] text-white mt-2">📋 Copia</button>
+    </div>
+
+    <div class="bg-[#F0EAD8] rounded-xl p-4 text-sm text-[#254A18]">
+      <strong>Poi:</strong> incolla il YAML nella tab "Incolla YAML", carica l'immagine template,
+      clicca "Carica campi" e modifica i valori che vuoi cambiare.
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Stato globale ─────────────────────────────────────────────
+  let currentMode = 'yaml';
+
+  // ── Tab switching ─────────────────────────────────────────────
+  function switchTab(tab) {
+    currentMode = tab;
+    document.getElementById('tab-yaml').classList.toggle('active',     tab === 'yaml');
+    document.getElementById('tab-yaml').classList.toggle('tab-panel',  true);
+    document.getElementById('tab-template').classList.toggle('active', tab === 'template');
+    document.getElementById('tab-template').classList.toggle('tab-panel', true);
+    document.getElementById('tab-yaml-btn').className   = 'tab-btn ' + (tab === 'yaml'     ? 'active' : 'inactive');
+    document.getElementById('tab-tmpl-btn').className   = 'tab-btn ' + (tab === 'template' ? 'active' : 'inactive');
+  }
+
+  // ── Parse YAML → form dinamico ────────────────────────────────
+  async function parseYaml() {
+    const yaml_text = document.getElementById('yaml-input').value.trim();
+    if (!yaml_text) { alert('Incolla prima il YAML'); return; }
+
+    const fd = new FormData();
+    fd.append('yaml_text', yaml_text);
+    const res  = await fetch('/parse-yaml', { method:'POST', body:fd });
+    const json = await res.json();
+
+    if (!json.ok) { showError(json.error); return; }
+
+    const inner = document.getElementById('yaml-fields-inner');
+    inner.innerHTML = '';
+    json.fields.forEach(f => {
+      inner.innerHTML += `
+        <div class="field-row">
+          <label class="lbl">${f.label}</label>
+          <input type="text" name="${f.key}" class="inp dynamic-field"
+                 placeholder="${f.placeholder}" value="${f.value}">
+        </div>`;
+    });
+    document.getElementById('yaml-fields').classList.remove('hidden');
+  }
+
+  // ── Upload immagine ───────────────────────────────────────────
+  async function uploadImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('image', file);
+    document.getElementById('upload-label').textContent = 'Caricamento...';
+    const res  = await fetch('/upload-image', { method:'POST', body:fd });
+    const json = await res.json();
+    if (json.ok) {
+      document.getElementById('upload-label').textContent = '✅ ' + json.filename;
+      document.getElementById('upload-status').textContent = 'Immagine salvata in assets/images/';
+      document.getElementById('upload-status').classList.remove('hidden');
+      // Aggiorna il campo template_img nei campi dinamici se presente
+      setFieldValue('template_img', json.filename);
+      setFieldValue('hero_img',     json.filename);
+      // Aggiorna select immagini
+      refreshImageSelect(json.filename);
+    } else {
+      document.getElementById('upload-label').textContent = '❌ ' + json.error;
     }
+  }
 
-    async function generatePreview() {
-      const spinner  = document.getElementById('spinner');
-      const img      = document.getElementById('preview-img');
-      const ph       = document.getElementById('preview-placeholder');
-      const errMsg   = document.getElementById('error-msg');
+  function setFieldValue(key, value) {
+    const el = document.querySelector(`input[name="${key}"]`);
+    if (el) el.value = value;
+  }
 
-      spinner.style.display = 'block';
-      img.style.display = 'none';
-      ph.style.display  = 'none';
-      errMsg.classList.add('hidden');
+  function setImageVar(value) {
+    if (!value) return;
+    setFieldValue('template_img', value);
+    setFieldValue('hero_img',     value);
+  }
 
-      const formData = new FormData(document.getElementById('main-form'));
+  function refreshImageSelect(newFilename) {
+    const sel = document.getElementById('existing-images');
+    const opt = document.createElement('option');
+    opt.value = newFilename; opt.text = newFilename; opt.selected = true;
+    sel.appendChild(opt);
+  }
 
-      try {
-        const res  = await fetch('/preview', { method: 'POST', body: formData });
-        const json = await res.json();
-        if (json.ok) {
-          img.src = 'data:image/png;base64,' + json.image;
-          img.style.display = 'block';
-        } else {
-          errMsg.textContent = 'Errore: ' + json.error;
-          errMsg.classList.remove('hidden');
-          ph.style.display = 'block';
-        }
-      } catch(e) {
-        errMsg.textContent = 'Errore di rete: ' + e.message;
-        errMsg.classList.remove('hidden');
+  // ── Carica campi da template salvato ─────────────────────────
+  async function loadTemplateFields(name) {
+    if (!name) return;
+    const res  = await fetch('/parse-yaml-from-template?name=' + encodeURIComponent(name));
+    const json = await res.json();
+    if (!json.ok) { showError(json.error); return; }
+    const cont = document.getElementById('template-fields');
+    cont.innerHTML = '';
+    json.fields.forEach(f => {
+      cont.innerHTML += `
+        <div class="field-row">
+          <label class="lbl">${f.label}</label>
+          <input type="text" name="${f.key}" class="inp dynamic-field"
+                 placeholder="${f.placeholder}" value="${f.value}">
+        </div>`;
+    });
+  }
+
+  // ── Raccoglie tutti i dati dal form ───────────────────────────
+  function collectFormData() {
+    const fd = new FormData();
+    fd.append('mode', currentMode);
+    fd.append('yaml_text',     document.getElementById('yaml-input').value);
+    fd.append('template_name', document.getElementById('template-select').value);
+    fd.append('output_name',   document.getElementById('output-name').value || 'volantino');
+
+    // Tutti i campi dinamici
+    document.querySelectorAll('.dynamic-field').forEach(el => {
+      if (el.value.trim()) fd.append(el.name, el.value.trim());
+    });
+    return fd;
+  }
+
+  // ── Genera anteprima ──────────────────────────────────────────
+  async function generatePreview() {
+    const spinner = document.getElementById('spinner');
+    const img     = document.getElementById('preview-img');
+    const ph      = document.getElementById('preview-placeholder');
+    spinner.style.display = 'block';
+    img.style.display     = 'none';
+    ph.style.display      = 'none';
+    hideError();
+
+    try {
+      const res  = await fetch('/preview', { method:'POST', body:collectFormData() });
+      const json = await res.json();
+      if (json.ok) {
+        img.src           = 'data:image/png;base64,' + json.image;
+        img.style.display = 'block';
+      } else {
+        showError(json.error);
         ph.style.display = 'block';
-      } finally {
-        spinner.style.display = 'none';
       }
+    } catch(e) {
+      showError('Errore di rete: ' + e.message);
+      ph.style.display = 'block';
+    } finally {
+      spinner.style.display = 'none';
     }
+  }
 
-    function downloadPng() {
-      const mainForm = document.getElementById('main-form');
-      const dlForm   = document.getElementById('download-form');
-      // Copia tutti i campi nel form di download
-      dlForm.innerHTML = '';
-      new FormData(mainForm).forEach((v, k) => {
-        const inp = document.createElement('input');
-        inp.type = 'hidden'; inp.name = k; inp.value = v;
-        dlForm.appendChild(inp);
-      });
-      dlForm.submit();
-    }
+  // ── Download PNG ──────────────────────────────────────────────
+  async function downloadPng() {
+    const fd  = collectFormData();
+    const res = await fetch('/download', { method:'POST', body:fd });
+    if (!res.ok) { showError(await res.text()); return; }
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = (document.getElementById('output-name').value || 'volantino') + '.png';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
-    async function loadFields(templateName) {
-      const res    = await fetch('/fields/' + templateName);
-      const json   = await res.json();
-      const cont   = document.getElementById('fields-container');
-      cont.innerHTML = '';
-      json.fields.forEach(f => {
-        cont.innerHTML += `
-          <div class="mb-4">
-            <label class="field-label mb-1 block">${f.label}</label>
-            <input type="text" name="${f.key}" class="field-input"
-                   placeholder="${f.placeholder}" value="${f.placeholder}">
-          </div>`;
-      });
-    }
-  </script>
+  // ── Utility ───────────────────────────────────────────────────
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+  function hideError() {
+    document.getElementById('error-msg').classList.add('hidden');
+  }
+  function closeModal(e) {
+    if (e.target === document.getElementById('modal-overlay'))
+      document.getElementById('modal-overlay').style.display = 'none';
+  }
+  function copyText(id) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => alert('Copiato!'));
+  }
+</script>
 
 </body>
 </html>
