@@ -1,0 +1,200 @@
+output_name: virtus_difesa_personale_layout
+
+canvas:
+  width: 1080
+  height: 1530
+  background: "#F7F4F0"
+
+assets_base: "assets/images"
+
+layers:
+  - id: top_bar
+    type: rect
+    x: 0
+    y: 0
+    w: 1080
+    h: 44
+    fill: "#8B1A2B"
+
+  - id: hero
+    type: image
+    src: "hero.jpg"
+    x: 80
+    y: 120
+    w: 920
+    h: 520
+    fit: cover
+
+  - id: logo
+    type: image
+    src: "logo.png"
+    x: 80
+    y: 690
+    w: 130
+    h: 130
+    fit: contain
+
+  - id: title
+    type: text
+    text: "DIFESA PERSONALE"
+    x: 235
+    y: 690
+    w: 765
+    h: 100
+    font: "Montserrat"
+    bold: true
+    size: 68
+    color: "#2C2C2C"
+    align: left
+
+  - id: subtitle
+    type: text
+    text: "Percorso pratico per adulti: controllo, prevenzione e sicurezza personale."
+    x: 235
+    y: 795
+    w: 740
+    h: 88
+    font: "Montserrat"
+    size: 26
+    color: "#555555"
+    align: left
+
+  - id: divider
+    type: line
+    x1: 80
+    y1: 920
+    x2: 1000
+    y2: 920
+    color: "#8B1A2B"
+    width: 3
+
+  - id: benefit_1_box
+    type: rect
+    x: 80
+    y: 960
+    w: 285
+    h: 180
+    fill: "#FFFFFF"
+    radius: 24
+
+  - id: benefit_1_title
+    type: text
+    text: "SICUREZZA"
+    x: 105
+    y: 990
+    w: 235
+    h: 42
+    font: "Montserrat"
+    bold: true
+    size: 27
+    color: "#8B1A2B"
+
+  - id: benefit_1_text
+    type: text
+    text: "Impari a muoverti con più controllo."
+    x: 105
+    y: 1042
+    w: 235
+    h: 70
+    font: "Montserrat"
+    size: 22
+    color: "#444444"
+
+  - id: benefit_2_box
+    type: rect
+    x: 397
+    y: 960
+    w: 285
+    h: 180
+    fill: "#FFFFFF"
+    radius: 24
+
+  - id: benefit_2_title
+    type: text
+    text: "PREVENZIONE"
+    x: 422
+    y: 990
+    w: 235
+    h: 42
+    font: "Montserrat"
+    bold: true
+    size: 27
+    color: "#8B1A2B"
+
+  - id: benefit_2_text
+    type: text
+    text: "Riconosci situazioni rischiose prima che degenerino."
+    x: 422
+    y: 1042
+    w: 235
+    h: 78
+    font: "Montserrat"
+    size: 21
+    color: "#444444"
+
+  - id: benefit_3_box
+    type: rect
+    x: 715
+    y: 960
+    w: 285
+    h: 180
+    fill: "#FFFFFF"
+    radius: 24
+
+  - id: benefit_3_title
+    type: text
+    text: "AUTOCONTROLLO"
+    x: 740
+    y: 990
+    w: 235
+    h: 42
+    font: "Montserrat"
+    bold: true
+    size: 24
+    color: "#8B1A2B"
+
+  - id: benefit_3_text
+    type: text
+    text: "Gestisci stress, distanza e reazione."
+    x: 740
+    y: 1042
+    w: 235
+    h: 70
+    font: "Montserrat"
+    size: 22
+    color: "#444444"
+
+  - id: cta_box
+    type: rect
+    x: 80
+    y: 1270
+    w: 920
+    h: 130
+    fill: "#8B1A2B"
+    radius: 28
+
+  - id: cta_text
+    type: text
+    text: "PROVA GRATUITA"
+    x: 80
+    y: 1294
+    w: 920
+    h: 54
+    font: "Montserrat"
+    bold: true
+    size: 42
+    color: "#FFFFFF"
+    align: center
+
+  - id: contact_text
+    type: text
+    text: "Via Corfù 71  |  3518899843  |  @virtus_group_"
+    x: 80
+    y: 1360
+    w: 920
+    h: 34
+    font: "Montserrat"
+    size: 24
+    color: "#FFFFFF"
+    align: center
+

@@ -78,6 +78,16 @@ Gli esempi JSON in `data/examples/` restano supportati:
 python generate.py data/examples/boxe_10_14.json
 ```
 
+## Generic Layout Engine
+
+Per creare un PowerPoint modificabile partendo da un layout YAML completo, usa il nuovo comando:
+
+```powershell
+python generate_layout.py layouts/examples/virtus_difesa_personale_layout.yaml
+```
+
+Documentazione: [docs/LAYOUT_ENGINE.md](docs/LAYOUT_ENGINE.md)
+
 ## Formato YAML
 
 ```yaml
