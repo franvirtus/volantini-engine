@@ -10,7 +10,7 @@ Il progetto prende:
 
 e genera sempre un PowerPoint modificabile in `output/`.
 
-Non e una web app e non contiene editor visuale: il design resta nel template PowerPoint, il motore sostituisce solo testi e immagini.
+Non è una web app e non contiene editor visuale: il design resta nel template PowerPoint, il motore sostituisce solo testi e immagini.
 
 ## Struttura
 
@@ -68,7 +68,7 @@ Con export PDF/PNG:
 python generate.py campaigns/lotta_pugilato_10_14.yaml --pdf --png
 ```
 
-PDF e PNG richiedono Windows, PowerPoint installato e `pywin32`. Se `pywin32` non e disponibile, il PPTX viene comunque generato e viene stampato un warning.
+PDF e PNG richiedono Windows, PowerPoint installato e `pywin32`. Se `pywin32` non è disponibile, il PPTX viene comunque generato e viene stampato un warning.
 
 ## Uso JSON Legacy
 
@@ -115,7 +115,7 @@ Nel template PowerPoint inserisci testi modificabili come caselle testo:
 {{PHONE}}
 ```
 
-Il motore sostituisce anche placeholder spezzati in piu run PowerPoint, quando sono nello stesso paragrafo/casella testo.
+Il motore sostituisce anche placeholder spezzati in più run PowerPoint, quando sono nello stesso paragrafo/casella testo.
 
 ## Placeholder Immagini
 
