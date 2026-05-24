@@ -144,6 +144,18 @@ Output:
 output/virtus_difesa_personale_layout.pptx
 ```
 
+## Flusso quotidiano senza Codex
+
+Nel lavoro quotidiano Codex non serve per produrre ogni volantino.
+
+Il flusso operativo è:
+
+1. ChatGPT genera la bozza grafica e, dopo approvazione, prepara il layout YAML.
+2. L'utente salva il file YAML in `layouts/approved/`.
+3. L'utente lancia `python generate_layout.py layouts/approved/nome_volantino.yaml`.
+4. Il motore genera il PowerPoint modificabile in `output/`.
+5. Codex e GitHub servono solo per modificare o migliorare il motore, non per creare i singoli volantini.
+
 ## Modifiche Future
 
 Per cambiare telefono, indirizzo, logo, testi o immagini senza perdere lo stile:
